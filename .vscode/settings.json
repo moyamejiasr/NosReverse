@@ -1,5 +1,6 @@
 {
     "files.associations": {
-        "xtr1common": "cpp"
+        "xtr1common": "cpp",
+        "algorithm": "cpp"
     }
 }

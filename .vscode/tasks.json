@@ -1,44 +1,21 @@
 {
 	"version": "2.0.0",
 	"problemMatcher": ["$gcc"],
-	"presentation": {
-		"reveal": "always",
-		"panel": "shared"
-	},
+	"presentation": { "panel": "shared" },
 	"options": { "cwd": "${workspaceFolder}" },
-	"command": "bcc32x.exe",
+	"command": "make",
 
 	"tasks": [
 		{
-			"type": "shell",
-			"label": "Clean Output",
-			"command": "Remove-Item",
-			"args": [
-				"bin\\*",
-				"-Recurse",
-				"-Force"
-			],
-			"problemMatcher": [],
-			"presentation": {
-				"reveal": "never"
-			}
+			"type": "shell", "label": "Build Library",
+			"group": { "kind": "build", "isDefault": true },
+			"presentation": { "reveal": "always" },
+			"args": [ "build" ],
 		},
 		{
-			"type": "shell",
-			"label": "Build Library",
-			"args": [
-				"-g",
-				"dllmain.cpp",
-				"-tWD",
-				"-n",
-				"bin",
-				"-o",
-				"bin\\NTLibrary.dll"
-			],
-			"group": {
-				"kind": "build",
-				"isDefault": true
-			}
+			"type": "shell", "label": "Clean Output",
+			"presentation": { "reveal": "never" },
+			"args": [ "clean" ],
 		}
 	]
 }
