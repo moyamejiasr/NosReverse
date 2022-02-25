@@ -7,9 +7,8 @@
 #define GNotMessage(X) MessageBox(0, X, "Process Launcher", MB_SYSTEMMODAL | MB_ICONINFORMATION)
 
 constexpr auto NTDllFName = "NTLibrary.dll";
-constexpr auto NTGameWDir = "C:\\Users\\rmoya\\Documents\\Global";
-constexpr auto NTGamePath = "C:\\Users\\rmoya\\Documents\\Global\\Nostale.dat";
-char NTGameArg[] = "C:\\Users\\rmoya\\Documents\\Global\\Nostale.dat EntwellNostaleClientLoadFromIni";
+constexpr auto NTExeFName = "\\Nostale.dat";
+constexpr auto NTExeFArgs = "\\Nostale.dat EntwellNostaleClientLoadFromIni";
 
 void TryClosePrevious() 
 {
@@ -97,10 +96,22 @@ int APIENTRY WinMain(HINSTANCE, HINSTANCE, PSTR, int)
     // Try closing executable if running
     TryClosePrevious();
 
+    // Get the game Directory
+    char NTGameWDir[MAX_PATH];
+    GetEnvironmentVariable("NosPath", NTGameWDir, MAX_PATH);
+    // Get the game Executable
+    char NTGamePath[MAX_PATH];
+    strcpy(NTGamePath, NTGameWDir);
+    strcat(NTGamePath, NTExeFName);
+    // Get the game Arguments
+    char NTGameArgs[MAX_PATH];
+    strcpy(NTGameArgs, NTGamePath);
+    strcat(NTGameArgs, NTExeFArgs);
+
     // Create the process
     STARTUPINFOA StartupInfo = { sizeof(StartupInfo) };
     PROCESS_INFORMATION ProcessInfo = {};
-    if (!CreateProcessA(NTGamePath, NTGameArg, NULL, NULL, TRUE, // FALSE
+    if (!CreateProcessA(NTGamePath, NTGameArgs, NULL, NULL, TRUE, // FALSE
         CREATE_SUSPENDED | DETACHED_PROCESS, NULL, NTGameWDir, &StartupInfo, &ProcessInfo))
     {
         GErrMessage("Error, the new process cannot be created.");

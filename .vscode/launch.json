@@ -10,8 +10,7 @@
             "program": "${workspaceFolder}\\bin\\NTLauncher.exe",
             "console": "integratedTerminal", "cwd": "${workspaceFolder}\\bin",
             "environment": [
-                { "name": "NosPath", "value": "C:\\Users\\rmoya\\Documents\\Global\\Nostale.dat" },
-                { "name": "DllPath", "value": "${workspaceFolder}\\bin\\NTLibrary.dll" },
+                { "name": "NosPath", "value": "C:\\Users\\rmoya\\Documents\\Global" },
             ],
         }
     ]
