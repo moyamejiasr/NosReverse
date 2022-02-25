@@ -1,5 +1,5 @@
 #pragma once
-#include "Common.h"
+#include "../Common.h"
 
 typedef int Integer;
 typedef int Pointer;

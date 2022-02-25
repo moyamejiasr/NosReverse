@@ -1,15 +1,12 @@
 #include "Common.h"
-#include "SysInit.h"
-#include "System.h"
-#include "Forms.h"
+#include "Delphi/SysInit.h"
+#include "Delphi/System.h"
+#include "Delphi/Forms.h"
+#include "Nostale/NosTaleMainF.h"
 
 constexpr auto NTGAME = MAKE_STRING("Nostale");
 constexpr auto SECRET = MAKE_STRING("EntwellNostaleClient");
-struct TNosTaleMainF
-{
-    static VMT_ClassDefinition* Class;
-};
-VMT_ClassDefinition* TNosTaleMainF::Class = Cast(0x005DACF0);
+
 Forms::PApplication* Application = Cast(0x005EBDD8);
 Forms::PCustomForm CustomForm = Cast(0x00771CC0);
 
@@ -31,7 +28,8 @@ auto EntryPoint = Cast((PVOID)0x005DB678, [] {
             {
                 Forms::TApplication::Initialize(*Application);
                 Forms::TApplication::SetTitle(*Application, (String)NTGAME.Value);
-                Forms::TApplication::CreateForm(*Application, TNosTaleMainF::Class->SelfPtr, CustomForm);
+                Forms::TApplication::CreateForm(*Application, 
+                    NosTaleMainF::TNosTaleMainF::Class->SelfPtr, CustomForm);
                 Forms::TApplication::Run(*Application);
 
                 if (GameMutex) CloseHandle(GameMutex);

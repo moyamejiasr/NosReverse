@@ -1,9 +1,13 @@
+.PHONY: launcher library all clean
 
-build:
-	bcc32x -tWD src/*.cpp -n bin -o bin/NTLibrary.dll
+launcher:
+	bcc32x -tW util/*.cpp -n bin -o bin/NTLauncher.exe
 
-build2:
-	bcc32x -tWD src/MinHook/*.c -n bin -o bin/MinHook.dll
+library:
+	bcc32x -tWD src/*.cpp src/Delphi/*.cpp src/Nostale/*.cpp -n bin -o bin/NTLibrary.dll
+
+all: launcher library
 
 clean:
 	del /f /q bin\*
+	

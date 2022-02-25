@@ -10,12 +10,12 @@
 			"type": "shell", "label": "Build Library",
 			"group": { "kind": "build", "isDefault": true },
 			"presentation": { "reveal": "always" },
-			"args": [ "build" ],
+			"args": [ "library" ],
 		},
 		{
 			"type": "shell", "label": "Clean Output",
 			"presentation": { "reveal": "never" },
-			"args": [ "clean" ],
+			"args": [ "clean", "launcher" ],
 		}
 	]
 }
