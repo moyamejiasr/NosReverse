@@ -39,6 +39,14 @@ namespace System
     void __fastcall LStrCopy(String, Integer, Integer, PString);
     Integer __fastcall LStrCmp(String, String);
 
-	Pointer __fastcall ClassCreate(Pointer, Boolean);
-	void __fastcall AfterConstruction(Pointer);
+	typedef struct TObject
+	{
+		static void __fastcall Destroy(TObject*, Boolean);
+		static void __fastcall Free(TObject*);
+	} *PObject;
+
+	PObject __fastcall ClassCreate(Pointer, Boolean);
+	void __fastcall ClassDestroy(Pointer);
+	void __fastcall AfterConstruction(PObject);
+	void __fastcall BeforeDestruction(PObject, Boolean);
 };

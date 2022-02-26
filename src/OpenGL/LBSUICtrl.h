@@ -5,7 +5,7 @@
 
 namespace LBSUICtrl
 {
-    typedef struct TLBSWidgetList
+    typedef struct TLBSWidgetList: System::TObject
     {
         static VMT_ClassDefinition* Class;
 
@@ -13,9 +13,10 @@ namespace LBSUICtrl
         static Integer __fastcall Add(TLBSWidgetList*, Pointer);
     } *PLBSWidgetList;
 
-    typedef struct TLBSWidget
+    typedef struct TLBSWidget: System::TObject
     {
         static TLBSWidget* __fastcall Create(Pointer, Boolean, TLBSWidget*);
+        static void __fastcall Destroy(TLBSWidget*, Boolean);
 
         Pointer VTable;
 

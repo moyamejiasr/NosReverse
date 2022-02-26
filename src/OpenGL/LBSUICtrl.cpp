@@ -31,9 +31,19 @@ LBSUICtrl::PLBSWidget __fastcall LBSUICtrl::TLBSWidget::Create(Pointer AClass, B
     return Self;
 }
 
+void __fastcall LBSUICtrl::TLBSWidget::Destroy(PLBSWidget Self, Boolean Alloc)
+{
+    System::BeforeDestruction(Self, Alloc);
+    System::TObject::Free(Self->Children);
+    System::TObject::Destroy(Self, Alloc & 0xFC);
+    if ( Alloc > 0 )
+        System::ClassDestroy(Self);
+}
+
 Initialization _LBSUICtrl {
     {0x0047023C, LBSUICtrl::TLBSWidgetList::Create},
     {0x0047029C, LBSUICtrl::TLBSWidgetList::Add},
 
-    {0x0046FC18, LBSUICtrl::TLBSWidget::Create, true},
+    {0x0046FC18, LBSUICtrl::TLBSWidget::Create},
+    {0x0046FC84, LBSUICtrl::TLBSWidget::Destroy},
 };
