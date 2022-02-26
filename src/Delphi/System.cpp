@@ -36,5 +36,5 @@ Initialization _System {
     {0x00405108, System::LStrCopy},
     {0x00404FF4, System::LStrCmp},
     {0x00404148, System::ClassCreate},
-    {0x00404148, System::AfterConstruction},
+    {0x004041A0, System::AfterConstruction},
 };

@@ -26,11 +26,8 @@ LBSUICtrl::PLBSWidget __fastcall LBSUICtrl::TLBSWidget::Create(Pointer AClass, B
     Self->Cursor = 1;
     Self->Children = LBSUICtrl::TLBSWidgetList::Create(TLBSWidgetList::Class->SelfPtr, 1);
     if (PLBSWidget Parent = Self->Parent)
-    {
         LBSUICtrl::TLBSWidgetList::Add(Parent->Children, Self);
-    }
-    if ( Alloc )
-        System::AfterConstruction(Self);
+    if ( Alloc ) System::AfterConstruction(Self);
     return Self;
 }
 
