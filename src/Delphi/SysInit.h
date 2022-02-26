@@ -12,5 +12,5 @@ namespace SysInit
 
 	extern PITableType InitTable;
 
-	extern void(__fastcall* InitExe)(PITableType);
+    void __fastcall InitExe(PITableType);
 };

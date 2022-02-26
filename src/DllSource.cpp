@@ -10,11 +10,9 @@ constexpr auto SECRET = MAKE_STRING("EntwellNostaleClient");
 Forms::PApplication* Application = Cast(0x005EBDD8);
 Forms::PCustomForm CustomForm = Cast(0x00771CC0);
 
-auto EntryPoint = Cast((PVOID)0x005DB678, [] {
-    // Initialize Delphi
+void __fastcall EntryPoint() {
+    COUT("Executed custom EntryPoint!");
     SysInit::InitExe(SysInit::InitTable);
-
-    GErrMessage("Weirdly.... it works.");
 
     if (HANDLE GameMutex = CreateMutexA(NULL, -1, SECRET.Value))
     {
@@ -37,12 +35,22 @@ auto EntryPoint = Cast((PVOID)0x005DB678, [] {
         }
     }
     ExitProcess(0);
-});
+}
+
+Initialization _Main {
+    {0x005DB678, EntryPoint, true},
+};
 
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD dReason, LPVOID)
 {
-    if (dReason != DLL_PROCESS_ATTACH)
-        return TRUE;
-    DisableThreadLibraryCalls(hModule);
+    if (dReason == DLL_PROCESS_ATTACH)
+    {
+        AllocConsole();
+        freopen("CON", "w", stdout);
+        freopen("CON", "r", stdin);
+        freopen("CON", "w", stderr);
+        DisableThreadLibraryCalls(hModule);
+        std::cout << "NT Detourer Lib v1" << std::endl;
+    }
     return TRUE;
 }
