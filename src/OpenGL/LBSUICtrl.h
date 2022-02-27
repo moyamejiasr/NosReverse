@@ -11,17 +11,12 @@ namespace LBSUICtrl
     typedef struct TLBSWidget *PLBSWidget;
     typedef struct TLBSWidgetList *PLBSWidgetList;
 
-    typedef struct TLBSWidgetList: Classes::TList
-    {
-        static VMT_ClassDefinition* Class;
-
-        static PLBSWidgetList __fastcall Create(Pointer, Boolean);
-        static PLBSWidget __fastcall Get(PLBSWidgetList, Integer);
-        static Integer __fastcall Add(PLBSWidgetList, Pointer);
-    } *PLBSWidgetList;
+    void __fastcall ProcessFocus();
 
     struct TLBSWidget: System::TObject
     {
+        static VMT_ClassDefinition* Class;
+
         Byte Flags;
         PLBSWidget Parent;
         PLBSWidget FocusChild;
@@ -68,6 +63,19 @@ namespace LBSUICtrl
         static PLBSWidget __fastcall GetPrevFocusable(PLBSWidget);
         static PLBSWidget __fastcall GetLastFocusedChild(PLBSWidget);
         static PLBSWidget __fastcall GetFirstFocusedParent(PLBSWidget);
-        static void __fastcall SetFocus(PLBSWidget);
+        static void __fastcall BringToFront(PLBSWidget);
+        static void __fastcall SendToBack(PLBSWidget);
     };
+
+    typedef struct TLBSWidgetList: Classes::TList
+    {
+        static VMT_ClassDefinition* Class;
+
+        static PLBSWidgetList __fastcall Create(Pointer, Boolean);
+        static void __fastcall Destroy(PLBSWidgetList, Boolean);
+        static PLBSWidget __fastcall Get(PLBSWidgetList, Integer);
+        static Integer __fastcall Add(PLBSWidgetList, Pointer);
+        static void __fastcall Delete(PLBSWidgetList, Integer);
+        static void __fastcall _Clear(PLBSWidgetList);
+    } *PLBSWidgetList;
 }

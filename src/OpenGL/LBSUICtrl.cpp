@@ -1,30 +1,20 @@
 #include "LBSUICtrl.h"
 
-VMT_ClassDefinition* LBSUICtrl::TLBSWidgetList::Class = Cast(0x0046DC5C);
-
-LBSUICtrl::PLBSWidgetList __fastcall LBSUICtrl::TLBSWidgetList::Create(Pointer AClass, Boolean Alloc)
+void __fastcall LBSUICtrl::ProcessFocus()
 {
-    return nullptr;
+
 }
 
-LBSUICtrl::PLBSWidget __fastcall LBSUICtrl::TLBSWidgetList::Get(PLBSWidgetList Self, Integer Index)
-{
-    return nullptr;
-}
-
-Integer __fastcall LBSUICtrl::TLBSWidgetList::Add(PLBSWidgetList Self, Pointer Item)
-{
-    return 0;
-}
+VMT_ClassDefinition* LBSUICtrl::TLBSWidget::Class = Cast(0x0046DB9C);
 
 LBSUICtrl::PLBSWidget __fastcall LBSUICtrl::TLBSWidget::Create(Pointer AClass, Boolean Alloc, PLBSWidget FParent)
 {
-    volatile int _{}; // Bugfix stack issue related to ClassCreate
-    // Seems like this function moves the stack 10h and then, when
-    // finished, restores Ch. This is needed this way because they
-    // use an extra address to store data.
-
     PLBSWidget Self = (PLBSWidget)AClass;
+    if ( Alloc )
+    {
+        CLASSCREATE_STUD;
+        Self = (PLBSWidget)System::ClassCreate(Self, Alloc);
+    }
     if ( Alloc )
         Self = (PLBSWidget)System::ClassCreate(AClass, Alloc);
 
@@ -46,10 +36,11 @@ LBSUICtrl::PLBSWidget __fastcall LBSUICtrl::TLBSWidget::Create(Pointer AClass, B
 void __fastcall LBSUICtrl::TLBSWidget::Destroy(PLBSWidget Self, Boolean Alloc)
 {
     System::BeforeDestruction(Self, Alloc);
+
     System::TObject::Free(Self->Children);
     System::TObject::Destroy(Self, Alloc & 0xFC);
-    if ( Alloc > 0 )
-        System::ClassDestroy(Self);
+
+    if (Alloc) System::ClassDestroy(Self);
 }
 
 void __fastcall LBSUICtrl::TLBSWidget::SetRect(PLBSWidget Self, TLBSRect* FRect)
@@ -255,29 +246,100 @@ LBSUICtrl::PLBSWidget __fastcall LBSUICtrl::TLBSWidget::GetFirstFocusedParent(PL
     return nullptr;
 }
 
-void __fastcall LBSUICtrl::TLBSWidget::SetFocus(PLBSWidget Self)
+void __fastcall LBSUICtrl::TLBSWidget::BringToFront(PLBSWidget Self)
 {
     if (PLBSWidget Parent = Self->Parent)
     {
-        Integer SelfIndex = Classes::TList::IndexOf(Parent->Children, Self);
-        if ( SelfIndex >= 0 )
+        Integer Index = Classes::TList::IndexOf(Parent->Children, Self);
+        if ( Index < 0 ) return;  // An error occured here
+        
+        // Move me to top of Z-Index and give me focus.
+        Classes::TList::Move(Parent->Children, Index, Parent->Children->FCount - 1);
+        if ( (Self->Flags & 8) == 8 && Self->Visible && Self->Enabled )
         {
-            // If I'm in parent then move me to the end (top)
-            Classes::TList::Move(Parent->Children, SelfIndex, Parent->Children->FCount - 1);
-            // And give me the focus in parent if possible
-            if ( (Self->Flags & 8) == 8 && Self->Visible && Self->Enabled )
-            {
-                LBSUICtrl::TLBSWidget::SetFocusChild(Self->Parent, Self);
-                //LBSUICtrl::sub_46E488();
-            }
+            LBSUICtrl::TLBSWidget::SetFocusChild(Self->Parent, Self);
+            LBSUICtrl::ProcessFocus();
         }
     }
 }
 
+void __fastcall LBSUICtrl::TLBSWidget::SendToBack(PLBSWidget Self)
+{
+    if (PLBSWidget Parent = Self->Parent)
+    {
+        Integer Index = Classes::TList::IndexOf(Parent->Children, Self);
+        if ( Index < 0 ) return;  // An error occured here
+        
+        
+        // If I was focused it is because I'm on top of Z-Index.
+        // Then get the one before.
+        Classes::TList::Move(Parent->Children, Index, 0);
+        if ( (Self->Flags & 8) == 8 && Self->Visible && Self->Enabled )
+        {
+            PLBSWidget PrevFocusable = LBSUICtrl::TLBSWidget::GetPrevFocusable(Self->Parent);
+            LBSUICtrl::TLBSWidget::SetFocusChild(Self->Parent, PrevFocusable);
+            LBSUICtrl::ProcessFocus();
+        }
+    }
+}
+
+VMT_ClassDefinition* LBSUICtrl::TLBSWidgetList::Class = Cast(0x0046DC5C);
+
+LBSUICtrl::PLBSWidgetList __fastcall LBSUICtrl::TLBSWidgetList::Create(Pointer AClass, Boolean Alloc)
+{
+    PLBSWidgetList Self = (PLBSWidgetList)AClass;
+    if ( Alloc )
+    {
+        CLASSCREATE_STUD;
+        Self = (PLBSWidgetList)System::ClassCreate(Self, Alloc);
+    }
+        
+    if ( Alloc )
+        System::AfterConstruction(Self);
+    return Self;
+}
+
+void __fastcall LBSUICtrl::TLBSWidgetList::Destroy(PLBSWidgetList Self, Boolean Alloc)
+{
+    System::BeforeDestruction(Self, Alloc);
+
+    Self->Clear();
+    Classes::TList::Destroy(Self, Alloc & 0xFC);
+
+    if (Alloc) System::ClassDestroy(Self);
+}
+
+LBSUICtrl::PLBSWidget __fastcall LBSUICtrl::TLBSWidgetList::Get(PLBSWidgetList Self, Integer Index)
+{
+    return (PLBSWidget)Classes::TList::Get(Self, Index);
+}
+
+Integer __fastcall LBSUICtrl::TLBSWidgetList::Add(PLBSWidgetList Self, Pointer Item)
+{
+    return Classes::TList::Add(Self, Item);
+}
+
+void __fastcall LBSUICtrl::TLBSWidgetList::Delete(PLBSWidgetList Self, Integer Index)
+{
+    PLBSWidget Child = LBSUICtrl::TLBSWidgetList::Get(Self, Index);
+    System::TObject::Free(Child);
+    Classes::TList::Delete(Self, Index);
+}
+
+void __fastcall LBSUICtrl::TLBSWidgetList::_Clear(PLBSWidgetList Self)
+{
+    Integer Count = Self->FCount - 1;
+    if ( Count >= 0 )
+    {
+        do
+            LBSUICtrl::TLBSWidgetList::Delete(Self, Count--);
+        while ( Count != -1 );
+    }
+    Classes::TList::_Clear(Self);
+}
+
 Initialization _LBSUICtrl {
-    {0x0047023C, LBSUICtrl::TLBSWidgetList::Create},
-    {0x00470288, LBSUICtrl::TLBSWidgetList::Get},
-    {0x0047029C, LBSUICtrl::TLBSWidgetList::Add},
+    {0x0046E488, LBSUICtrl::ProcessFocus},
 
     {0x0046FC18, LBSUICtrl::TLBSWidget::Create, true},
     {0x0046FC84, LBSUICtrl::TLBSWidget::Destroy, true},
@@ -298,4 +360,13 @@ Initialization _LBSUICtrl {
     {0x0046FFD4, LBSUICtrl::TLBSWidget::GetPrevFocusable, true},
     {0x00470100, LBSUICtrl::TLBSWidget::GetLastFocusedChild, true},
     {0x0047012C, LBSUICtrl::TLBSWidget::GetFirstFocusedParent, true},
+    {0x00470158, LBSUICtrl::TLBSWidget::BringToFront, true},
+    {0x004701A8, LBSUICtrl::TLBSWidget::SendToBack, true},
+
+    {0x0047023C, LBSUICtrl::TLBSWidgetList::Create, true},
+    {0x0047025C, LBSUICtrl::TLBSWidgetList::Destroy, true},
+    {0x00470288, LBSUICtrl::TLBSWidgetList::Get, true},
+    {0x0047029C, LBSUICtrl::TLBSWidgetList::Add, true},
+    {0x004702A4, LBSUICtrl::TLBSWidgetList::Delete, true},
+    {0x004702C4, LBSUICtrl::TLBSWidgetList::_Clear, true},
 };

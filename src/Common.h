@@ -23,6 +23,11 @@
 #define GErrMessage(X) MessageBoxA(0, X, "Unexpected error", MB_SYSTEMMODAL | MB_ICONERROR)
 #define GNotMessage(X) MessageBoxA(0, X, "Process Launcher", MB_SYSTEMMODAL | MB_ICONINFORMATION)
 
+// Bugfix stack issue related to ClassCreate
+// Declaring this creates an extra stack pos
+// that will be used by the fn to store data
+#define CLASSCREATE_STUD volatile int _{}
+
 // Delphi String
 template <std::size_t N>
 struct DString {

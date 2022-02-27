@@ -12,11 +12,13 @@ namespace Classes
         Integer FCount;
         Integer FCapacity;
 
-        virtual void __fastcall Grow(PList) = 0;
-        virtual void __fastcall Notify(PList, Pointer, Integer) = 0;
-        virtual void __fastcall Clear(PList) = 0;
-        virtual void __fastcall Error(PList, PString, Integer) = 0;
+        virtual void __fastcall Grow() = 0;
+        virtual void __fastcall Notify(Pointer, Integer) = 0;
+        virtual void __fastcall Clear() = 0;
+        virtual void __fastcall Error(PString, Integer) = 0;
 
+        static Integer __fastcall Add(PList, Pointer);
+        static void __fastcall _Clear(PList);
         static void __fastcall Delete(PList, Integer);
         static Pointer __fastcall Get(PList, Integer);
         static Integer __fastcall IndexOf(PList, Pointer);
