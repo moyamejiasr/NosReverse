@@ -7,6 +7,11 @@ LBSUICtrl::PLBSWidgetList __fastcall LBSUICtrl::TLBSWidgetList::Create(Pointer A
     return nullptr;
 }
 
+LBSUICtrl::PLBSWidget __fastcall LBSUICtrl::TLBSWidgetList::Get(PLBSWidgetList Self, Integer Index)
+{
+    return nullptr;
+}
+
 Integer __fastcall LBSUICtrl::TLBSWidgetList::Add(PLBSWidgetList Self, Pointer Item)
 {
     return 0;
@@ -49,10 +54,10 @@ void __fastcall LBSUICtrl::TLBSWidget::Destroy(PLBSWidget Self, Boolean Alloc)
 
 void __fastcall LBSUICtrl::TLBSWidget::SetRect(PLBSWidget Self, TLBSRect* FRect)
 {
-    Boolean Changed = Self->Rect.RightBottom.X - Self->Rect.LeftTop.X != FRect->RightBottom.X - FRect->LeftTop.X
+    Boolean RChanged = Self->Rect.RightBottom.X - Self->Rect.LeftTop.X != FRect->RightBottom.X - FRect->LeftTop.X
                     || Self->Rect.RightBottom.Y - Self->Rect.LeftTop.Y != FRect->RightBottom.Y - FRect->LeftTop.Y;
     Self->Rect = *FRect;
-    if (Changed) Self->NotifyChange();
+    if (RChanged) Self->NotifyChange();
 }
 
 void __fastcall LBSUICtrl::TLBSWidget::SetX(PLBSWidget Self, Word Offset)
@@ -115,7 +120,7 @@ void __fastcall LBSUICtrl::TLBSWidget::SetParent(PLBSWidget Self, PLBSWidget Oth
         if ( Parent )
         {
             if ( Self == Parent->FocusChild )
-                Self->Parent->FocusChild = LBSUICtrl::TLBSWidget::NextFocusableChild(Self->Parent);
+                Self->Parent->FocusChild = LBSUICtrl::TLBSWidget::GetNextFocusable(Self->Parent);
 
             Integer Index = Classes::TList::IndexOf(Self->Parent->Children, Self);
             if ( Index >= 0 )
@@ -150,13 +155,128 @@ TVector2s __fastcall LBSUICtrl::TLBSWidget::CursorToPosition(PLBSWidget Self, TV
 }
 
 
-LBSUICtrl::PLBSWidget __fastcall LBSUICtrl::TLBSWidget::NextFocusableChild(PLBSWidget Self)
+LBSUICtrl::PLBSWidget __fastcall LBSUICtrl::TLBSWidget::GetNextFocusable(PLBSWidget Self)
 {
+    if (PLBSWidget FocusedChild = Self->FocusChild)
+    {
+        Integer FocusedIndex = Classes::TList::IndexOf(Self->Children, FocusedChild);
+        if (FocusedIndex < 0) return nullptr;  // An error occured here
+
+        // Try to search forward
+        for (Integer i = FocusedIndex + 1; i < Self->Children->FCount; i++)
+        {
+            PLBSWidget Child = LBSUICtrl::TLBSWidgetList::Get(Self->Children, i);
+            if (Child->Enabled && Child->Visible && Child->Flags & 8)
+                return Child;
+        }
+        // Try from the beginning otherwise
+        for (Integer i = 0; i < FocusedIndex; i++)
+        {
+            PLBSWidget Child = LBSUICtrl::TLBSWidgetList::Get(Self->Children, i);
+            if (Child->Enabled && Child->Visible && Child->Flags & 8)
+                return Child;
+        }
+    }
+    else
+    {
+        // Get first focus if there is no focused child
+        if (!FocusedChild)
+        {
+            for (Integer i = 0; i < Self->Children->FCount; i++)
+            {
+                PLBSWidget Child = LBSUICtrl::TLBSWidgetList::Get(Self->Children, i);
+                if (Child->Enabled && Child->Visible && Child->Flags & 8)
+                    return Child;
+            }
+        }
+    }
+
+    // Nohing found
     return nullptr;
+}
+
+LBSUICtrl::PLBSWidget __fastcall LBSUICtrl::TLBSWidget::GetPrevFocusable(PLBSWidget Self)
+{
+    if (PLBSWidget FocusedChild = Self->FocusChild)
+    {
+        Integer FocusedIndex = Classes::TList::IndexOf(Self->Children, FocusedChild);
+        if (FocusedIndex < 0) return nullptr;  // An error occured here
+
+        // Try to search backward
+        for (Integer i = FocusedIndex - 1; i >= 0; i--)
+        {
+            PLBSWidget Child = LBSUICtrl::TLBSWidgetList::Get(Self->Children, i);
+            if (Child->Enabled && Child->Visible && Child->Flags & 8)
+                return Child;
+        }
+        // Try from the end otherwise
+        for (Integer i = Self->Children->FCount - 1; i >= FocusedIndex + 1; i--)
+        {
+            PLBSWidget Child = LBSUICtrl::TLBSWidgetList::Get(Self->Children, i);
+            if (Child->Enabled && Child->Visible && Child->Flags & 8)
+                return Child;
+        }
+    }
+    else
+    {
+        // Get last focus if there is no focused child
+        if (!FocusedChild)
+        {
+            for (Integer i = Self->Children->FCount - 1; i >= 0; i--)
+            {
+                PLBSWidget Child = LBSUICtrl::TLBSWidgetList::Get(Self->Children, i);
+                if (Child->Enabled && Child->Visible && Child->Flags & 8)
+                    return Child;
+            }
+        }
+    }
+
+    // Nohing found
+    return nullptr;
+}
+
+LBSUICtrl::PLBSWidget __fastcall LBSUICtrl::TLBSWidget::GetLastFocusedChild(PLBSWidget Self)
+{
+    if (Self->FocusChild)
+        return LBSUICtrl::TLBSWidget::GetLastFocusedChild(Self->FocusChild);
+    
+    if (Self->Enabled && Self->Visible && Self->Flags & 8)
+        return Self;
+    return nullptr;
+}
+
+LBSUICtrl::PLBSWidget __fastcall LBSUICtrl::TLBSWidget::GetFirstFocusedParent(PLBSWidget Self)
+{
+    if ( Self->Parent )
+        return LBSUICtrl::TLBSWidget::GetFirstFocusedParent(Self->Parent);
+
+    if (Self->Enabled && Self->Visible && Self->Flags & 8)
+        return Self;
+    return nullptr;
+}
+
+void __fastcall LBSUICtrl::TLBSWidget::SetFocus(PLBSWidget Self)
+{
+    if (PLBSWidget Parent = Self->Parent)
+    {
+        Integer SelfIndex = Classes::TList::IndexOf(Parent->Children, Self);
+        if ( SelfIndex >= 0 )
+        {
+            // If I'm in parent then move me to the end (top)
+            Classes::TList::Move(Parent->Children, SelfIndex, Parent->Children->FCount - 1);
+            // And give me the focus in parent if possible
+            if ( (Self->Flags & 8) == 8 && Self->Visible && Self->Enabled )
+            {
+                LBSUICtrl::TLBSWidget::SetFocusChild(Self->Parent, Self);
+                //LBSUICtrl::sub_46E488();
+            }
+        }
+    }
 }
 
 Initialization _LBSUICtrl {
     {0x0047023C, LBSUICtrl::TLBSWidgetList::Create},
+    {0x00470288, LBSUICtrl::TLBSWidgetList::Get},
     {0x0047029C, LBSUICtrl::TLBSWidgetList::Add},
 
     {0x0046FC18, LBSUICtrl::TLBSWidget::Create, true},
@@ -171,8 +291,11 @@ Initialization _LBSUICtrl {
     {0x0046FDA8, LBSUICtrl::TLBSWidget::GetRootPosition, true},
     {0x0046FDDC, LBSUICtrl::TLBSWidget::SetParent, true},
     {0x0046FE34, LBSUICtrl::TLBSWidget::SetFocusChild, true},
-    {0x0046FE40, LBSUICtrl::TLBSWidget::SetEnabled, false}, // Too small
-    {0x0046FE44, LBSUICtrl::TLBSWidget::SetVisible, false}, // Too small
+    {0x0046FE40, LBSUICtrl::TLBSWidget::SetEnabled}, // Too small
+    {0x0046FE44, LBSUICtrl::TLBSWidget::SetVisible}, // Too small
     {0x0046FE64, LBSUICtrl::TLBSWidget::CursorToPosition, true},
-    {0x0046FEA0, LBSUICtrl::TLBSWidget::NextFocusableChild},
+    {0x0046FEA0, LBSUICtrl::TLBSWidget::GetNextFocusable, true},
+    {0x0046FFD4, LBSUICtrl::TLBSWidget::GetPrevFocusable, true},
+    {0x00470100, LBSUICtrl::TLBSWidget::GetLastFocusedChild, true},
+    {0x0047012C, LBSUICtrl::TLBSWidget::GetFirstFocusedParent, true},
 };

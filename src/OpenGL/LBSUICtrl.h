@@ -8,33 +8,29 @@ using namespace LBSVector;
 
 namespace LBSUICtrl
 {
+    typedef struct TLBSWidget *PLBSWidget;
+    typedef struct TLBSWidgetList *PLBSWidgetList;
+
     typedef struct TLBSWidgetList: Classes::TList
     {
         static VMT_ClassDefinition* Class;
 
-        static TLBSWidgetList* __fastcall Create(Pointer, Boolean);
-        static Integer __fastcall Add(TLBSWidgetList*, Pointer);
+        static PLBSWidgetList __fastcall Create(Pointer, Boolean);
+        static PLBSWidget __fastcall Get(PLBSWidgetList, Integer);
+        static Integer __fastcall Add(PLBSWidgetList, Pointer);
     } *PLBSWidgetList;
 
-    typedef struct TLBSWidget: System::TObject
+    struct TLBSWidget: System::TObject
     {
-        static TLBSWidget* __fastcall Create(Pointer, Boolean, TLBSWidget*);
-        static void __fastcall Destroy(TLBSWidget*, Boolean);
-        static void __fastcall SetRect(TLBSWidget*, TLBSRect*);
-        static void __fastcall SetX(TLBSWidget*, Word);
-        static void __fastcall SetY(TLBSWidget*, Word);
-        static Smallint __fastcall GetWidth(TLBSWidget*);
-        static void __fastcall SetWidth(TLBSWidget*, Word);
-        static Smallint __fastcall GetHeight(TLBSWidget*);
-        static void __fastcall SetHeight(TLBSWidget*, Word);
-        static TVector2s __fastcall GetRootPosition(TLBSWidget*);
-        static void __fastcall SetParent(TLBSWidget*, TLBSWidget*);
-        static void __fastcall SetFocusChild(TLBSWidget*, TLBSWidget*);
-        static void __fastcall SetEnabled(TLBSWidget*, Boolean);
-        static void __fastcall SetVisible(TLBSWidget*, Boolean);
-        static TVector2s __fastcall CursorToPosition(TLBSWidget*, TVector2s);
-
-        static TLBSWidget* __fastcall NextFocusableChild(TLBSWidget*);
+        Byte Flags;
+        PLBSWidget Parent;
+        PLBSWidget FocusChild;
+        TLBSRect Rect;
+        Boolean Visible;
+        Boolean Enabled;
+        Boolean Focused;
+        Word Cursor;
+        PLBSWidgetList Children;
 
         virtual void __fastcall Redraw() = 0;
         virtual void __fastcall OnMouseBtnDw() = 0;
@@ -53,15 +49,25 @@ namespace LBSUICtrl
         virtual void __fastcall Unknown15() = 0;
         virtual void __fastcall ReCreate() = 0;
 
-
-        Byte Flags;
-        TLBSWidget* Parent;
-        TLBSWidget* FocusChild;
-        TLBSRect Rect;
-        Boolean Visible;
-        Boolean Enabled;
-        Boolean Focused;
-        Word Cursor;
-        PLBSWidgetList Children;
-    } *PLBSWidget;
+        static PLBSWidget __fastcall Create(Pointer, Boolean, PLBSWidget);
+        static void __fastcall Destroy(PLBSWidget, Boolean);
+        static void __fastcall SetRect(PLBSWidget, TLBSRect*);
+        static void __fastcall SetX(PLBSWidget, Word);
+        static void __fastcall SetY(PLBSWidget, Word);
+        static Smallint __fastcall GetWidth(PLBSWidget);
+        static void __fastcall SetWidth(PLBSWidget, Word);
+        static Smallint __fastcall GetHeight(PLBSWidget);
+        static void __fastcall SetHeight(PLBSWidget, Word);
+        static TVector2s __fastcall GetRootPosition(PLBSWidget);
+        static void __fastcall SetParent(PLBSWidget, PLBSWidget);
+        static void __fastcall SetFocusChild(PLBSWidget, PLBSWidget);
+        static void __fastcall SetEnabled(PLBSWidget, Boolean);
+        static void __fastcall SetVisible(PLBSWidget, Boolean);
+        static TVector2s __fastcall CursorToPosition(PLBSWidget, TVector2s);
+        static PLBSWidget __fastcall GetNextFocusable(PLBSWidget);
+        static PLBSWidget __fastcall GetPrevFocusable(PLBSWidget);
+        static PLBSWidget __fastcall GetLastFocusedChild(PLBSWidget);
+        static PLBSWidget __fastcall GetFirstFocusedParent(PLBSWidget);
+        static void __fastcall SetFocus(PLBSWidget);
+    };
 }
