@@ -44,7 +44,6 @@ namespace System
 		static void __fastcall Destroy(TObject*, Boolean);
 		static void __fastcall Free(TObject*);
 		
-		Pointer _vftable;
 	} *PObject;
 
 	PObject __fastcall ClassCreate(Pointer, Boolean);

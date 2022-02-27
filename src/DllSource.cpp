@@ -12,6 +12,8 @@ Forms::PCustomForm CustomForm = Cast(0x00771CC0);
 
 void __fastcall EntryPoint() {
     COUT("Executed custom EntryPoint!");
+    // while (!IsDebuggerPresent()) Sleep(200);
+
     SysInit::InitExe(SysInit::InitTable);
 
     if (HANDLE GameMutex = CreateMutexA(NULL, -1, SECRET.Value))
@@ -50,7 +52,7 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD dReason, LPVOID)
         freopen("CON", "r", stdin);
         freopen("CON", "w", stderr);
         DisableThreadLibraryCalls(hModule);
-        std::cout << "NT Detourer Lib v1" << std::endl;
+        SetConsoleTitle("NT Detourer Lib v1__");
     }
     return TRUE;
 }

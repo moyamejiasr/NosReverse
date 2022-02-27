@@ -31,6 +31,13 @@ namespace LBSVector
         Single X, Y, Z, W;
     };
 
+    struct TLBSRect
+    {
+        TVector2s LeftTop;
+        TVector2s RightBottom;
+    };
+
+
     struct TMatrix3f
     {
         TVector3f X;
@@ -46,4 +53,5 @@ namespace LBSVector
         TVector3f W;
     };
 
+    TVector2s __fastcall VectorAdd2s(TVector2s, Word, Word);
 }
