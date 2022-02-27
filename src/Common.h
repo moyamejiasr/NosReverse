@@ -36,13 +36,13 @@ template <typename T>
 class CastWrapper
 {
     const T& mX;
-    CastWrapper(const T& x) : mX(x) {}
+    constexpr CastWrapper(const T& x) : mX(x) {}
 public:
-    template <typename R> friend CastWrapper<R> Cast(const R& x);
-    template <typename U> operator U() { return reinterpret_cast<U>(mX); }
+    template <typename R> constexpr friend CastWrapper<R> Cast(const R& x);
+    template <typename U> constexpr operator U() { return reinterpret_cast<U>(mX); }
 };
 template <typename R>
-CastWrapper<R> Cast(const R& x)
+constexpr CastWrapper<R> Cast(const R& x)
 {
     return CastWrapper<R>(x);
 }
