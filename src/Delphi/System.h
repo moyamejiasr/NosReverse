@@ -47,6 +47,6 @@ namespace System
 
 	PObject __fastcall ClassCreate(Pointer, Boolean);
 	void __fastcall ClassDestroy(Pointer);
-	void __fastcall AfterConstruction(PObject);
+	Pointer __fastcall AfterConstruction(PObject);
 	void __fastcall BeforeDestruction(PObject, Boolean);
 };

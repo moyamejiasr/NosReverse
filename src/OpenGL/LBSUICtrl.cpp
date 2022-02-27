@@ -14,9 +14,14 @@ Integer __fastcall LBSUICtrl::TLBSWidgetList::Add(PLBSWidgetList Self, Pointer I
 
 LBSUICtrl::PLBSWidget __fastcall LBSUICtrl::TLBSWidget::Create(Pointer AClass, Boolean Alloc, PLBSWidget FParent)
 {
+    volatile int _{}; // Bugfix stack issue related to ClassCreate
+    // Seems like this function moves the stack 10h and then, when
+    // finished restores Ch.
+
     PLBSWidget Self = (PLBSWidget)AClass;
     if ( Alloc )
         Self = (PLBSWidget)System::ClassCreate(AClass, Alloc);
+
     Self->Parent = FParent;
     Self->FocusChild = 0;
     Self->Flags = 1;
@@ -26,8 +31,9 @@ LBSUICtrl::PLBSWidget __fastcall LBSUICtrl::TLBSWidget::Create(Pointer AClass, B
     Self->Cursor = 1;
     Self->Children = LBSUICtrl::TLBSWidgetList::Create(TLBSWidgetList::Class->SelfPtr, 1);
     if (PLBSWidget Parent = Self->Parent)
-        LBSUICtrl::TLBSWidgetList::Add(Parent->Children, Self);
-    if ( Alloc ) System::AfterConstruction(Self);
+        LBSUICtrl::TLBSWidgetList::Add(FParent->Children, Self);
+
+    if (Alloc) System::AfterConstruction(Self);
     return Self;
 }
 
@@ -44,6 +50,6 @@ Initialization _LBSUICtrl {
     {0x0047023C, LBSUICtrl::TLBSWidgetList::Create},
     {0x0047029C, LBSUICtrl::TLBSWidgetList::Add},
 
-    {0x0046FC18, LBSUICtrl::TLBSWidget::Create},
-    {0x0046FC84, LBSUICtrl::TLBSWidget::Destroy},
+    {0x0046FC18, LBSUICtrl::TLBSWidget::Create, true},
+    {0x0046FC84, LBSUICtrl::TLBSWidget::Destroy, true},
 };

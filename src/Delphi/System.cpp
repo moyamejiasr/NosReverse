@@ -40,9 +40,9 @@ void __fastcall System::ClassDestroy(Pointer AClass)
 
 }
 
-void __fastcall System::AfterConstruction(PObject Self)
+Pointer __fastcall System::AfterConstruction(PObject Self)
 {
-
+    return nullptr;
 }
 
 void __fastcall System::BeforeDestruction(PObject Self, Boolean Alloc)
