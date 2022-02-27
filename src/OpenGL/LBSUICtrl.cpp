@@ -16,7 +16,7 @@ LBSUICtrl::PLBSWidget __fastcall LBSUICtrl::TLBSWidget::Create(Pointer AClass, B
 {
     volatile int _{}; // Bugfix stack issue related to ClassCreate
     // Seems like this function moves the stack 10h and then, when
-    // finished restores Ch.
+    // finished, restores Ch.
 
     PLBSWidget Self = (PLBSWidget)AClass;
     if ( Alloc )

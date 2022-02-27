@@ -5,7 +5,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Run", "type": "cppvsdbg",
+            "name": "Launch", "type": "cppvsdbg",
             "request": "launch", "stopAtEntry": false,
             "program": "${workspaceFolder}\\bin\\NTLauncher.exe",
             "console": "integratedTerminal", "cwd": "${workspaceFolder}\\bin",

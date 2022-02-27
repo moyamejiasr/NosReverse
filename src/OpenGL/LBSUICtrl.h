@@ -18,8 +18,6 @@ namespace LBSUICtrl
         static TLBSWidget* __fastcall Create(Pointer, Boolean, TLBSWidget*);
         static void __fastcall Destroy(TLBSWidget*, Boolean);
 
-        Pointer VTable;
-
         Byte Flags;
         TLBSWidget* Parent;
         TLBSWidget* FocusChild;
@@ -31,5 +29,4 @@ namespace LBSUICtrl
         Word Cursor;
         PLBSWidgetList Children;
     } *PLBSWidget;
-
 }
