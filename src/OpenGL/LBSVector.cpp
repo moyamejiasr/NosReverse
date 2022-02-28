@@ -16,19 +16,19 @@ void __fastcall LBSVector::SinCos(Single* Sin, Single* Cos, Single Theta)
     *Sin = sin(Theta);
 }
 
-Single __fastcall LBSVector::Tan(Single x)
+Single __fastcall LBSVector::Tan(Single X)
 {
-    return tan(x);
+    return tan(X);
 }
 
-Single __fastcall LBSVector::ArcCos(Single x)
+Single __fastcall LBSVector::ArcCos(Single X)
 {
-    return ArcTan2(sqrt(1.0 - x * x), x);
+    return ArcTan2(sqrt(1.0 - X * X), X);
 }
 
-Single __fastcall LBSVector::ArcTan2(Single y, Single x)
+Single __fastcall LBSVector::ArcTan2(Single Y, Single X)
 {
-    return atan2(y, x);
+    return atan2(Y, X);
 }
 
 Single __fastcall LBSVector::NormalizeAngle(Single angle)
@@ -42,32 +42,32 @@ Single __fastcall LBSVector::NormalizeAngle(Single angle)
     return Result;
 }
 
-Integer __fastcall LBSVector::Trunc(Single x)
+Integer __fastcall LBSVector::Trunc(Single X)
 {
-    return x;
+    return X;
 }
 
-Extended __fastcall LBSVector::Int(Extended x)
+Extended __fastcall LBSVector::Int(Extended X)
 {
-    return (DWORD)x;
+    return (DWORD)X;
 }
 
-Integer __fastcall LBSVector::Round(Single x)
+Integer __fastcall LBSVector::Round(Single X)
 {
-    return std::round(x);
+    return X;
 }
 
-Single __fastcall LBSVector::FP16To32(Smallint x)
+Single __fastcall LBSVector::FP16To32(Word X)
 {
     DWORD Result{};
-    if (x)
+    if (X)
     {
         // Sign
-        Result |= ((x & 0x8000) >> 15 << 31);
+        Result |= ((X & 0x8000) >> 15 << 31);
         // Exponent
-        Result |= ((((x & 0x7800) >> 11) - 7 + 127) << 23);
+        Result |= ((((X & 0x7800) >> 11) - 7 + 127) << 23);
         // Fraction
-        Result |= ((x & 0x7FF) << 12);
+        Result |= ((X & 0x7FF) << 12);
     }
 
     return *(Single*)&Result;
@@ -78,9 +78,17 @@ LBSVector::TLBSColor __fastcall LBSVector::ColorMake(Byte R, Byte G, Byte B, Byt
     return {B, G, R, A};
 }
 
+LBSVector::TVector2s __fastcall LBSVector::VectorMake2s(Word X, Word Y)
+{
+    return {X, Y};
+}
+
 LBSVector::TVector2s __fastcall LBSVector::VectorAdd2s(TVector2s Pos, Word X, Word Y)
 {
-    return {};
+    TVector2s Result = Pos;
+    Result.X += X;
+    Result.Y += Y;
+    return Result;
 }
 
 Initialization _LBSVector {
@@ -97,6 +105,6 @@ Initialization _LBSVector {
     {0x0045995C, LBSVector::FP16To32, true},
     
     {0x004599A8, LBSVector::ColorMake, true},
-    
-    {0x004599D4, LBSVector::VectorAdd2s},
+    {0x004599C4, LBSVector::VectorMake2s, true},
+    {0x004599D4, LBSVector::VectorAdd2s, true},
 };

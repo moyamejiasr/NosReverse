@@ -12,11 +12,11 @@ namespace LBSVector
 
     struct TVector2s
     {
-        Smallint X, Y;
+        Word X, Y;
     };
     struct TVector4s
     {
-        Smallint X, Y, Z, W;
+        Word X, Y, Z, W;
     };
 
     struct TVector2f
@@ -73,9 +73,10 @@ namespace LBSVector
     Integer __fastcall Trunc(Single);
     Extended __fastcall Int(Extended);
     Integer __fastcall Round(Single);
-    Single __fastcall FP16To32(Smallint);
+    Single __fastcall FP16To32(Word);
 
     TLBSColor __fastcall ColorMake(Byte, Byte, Byte, Byte);
+    TVector2s __fastcall VectorMake2s(Word, Word);
 
     TVector2s __fastcall VectorAdd2s(TVector2s, Word, Word);
 }
