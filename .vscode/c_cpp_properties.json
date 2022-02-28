@@ -1,0 +1,13 @@
+{
+    "configurations": [
+        {
+            "name": "Win32",
+            "defines": ["_DEBUG", "_MSVC"],
+            "cppStandard": "c++11",
+            "includePath": ["${workspaceFolder}/**"],
+            "intelliSenseMode": "windows-msvc-x64",
+            "windowsSdkVersion": "10.0.22000.0"
+        }
+    ],
+    "version": 4
+}

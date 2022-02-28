@@ -1,5 +1,4 @@
 #pragma once
-#undef UNICODE
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
 #include <vector>
@@ -19,14 +18,22 @@
 #define CGET(X) std::cin >> X
 #define CINT std::getchar()
 
-// Windows MessageBox
-#define GErrMessage(X) MessageBoxA(0, X, "Unexpected error", MB_SYSTEMMODAL | MB_ICONERROR)
-#define GNotMessage(X) MessageBoxA(0, X, "Process Launcher", MB_SYSTEMMODAL | MB_ICONINFORMATION)
-
 // Bugfix stack issue related to ClassCreate
 // Declaring this creates an extra stack pos
 // that will be used by the fn to store data
 #define CLASSCREATE_STUD volatile int _{}
+
+// Workaround for c++ config
+#ifdef _MSVC
+#define __naked
+#define __asm__
+#else
+#define __naked __attribute__((naked))
+#endif
+
+// Windows MessageBox
+#define GErrMessage(X) MessageBoxA(0, X, "Unexpected error", MB_SYSTEMMODAL | MB_ICONERROR)
+#define GNotMessage(X) MessageBoxA(0, X, "Process Launcher", MB_SYSTEMMODAL | MB_ICONINFORMATION)
 
 // Delphi String
 template <std::size_t N>

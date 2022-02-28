@@ -8,7 +8,7 @@
             "name": "Launch", "type": "cppvsdbg",
             "request": "launch", "stopAtEntry": false,
             "program": "${workspaceFolder}\\bin\\NTLauncher.exe",
-            "console": "integratedTerminal", "cwd": "${workspaceFolder}\\bin",
+            "console": "internalConsole", "cwd": "${workspaceFolder}\\bin",
             "environment": [
                 { "name": "NosPath", "value": "C:\\Users\\rmoya\\Documents\\Global" },
             ],
