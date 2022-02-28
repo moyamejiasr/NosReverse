@@ -42,53 +42,40 @@ Single __fastcall LBSVector::NormalizeAngle(Single angle)
     return Result;
 }
 
-Integer __naked __fastcall LBSVector::Trunc(Single x)
+Integer __fastcall LBSVector::Trunc(Single x)
 {
-    __asm__(R"(.intel_syntax noprefix
-        PUSH    EBP
-        MOV     EBP, ESP
-        SUB     ESP, 8
-        FSTCW   [ESP]
-        FLDCW   [0x005DD648]
-        FLD     [EBP+8]
-        FISTP   [ESP+4]
-        FLDCW   [ESP]
-        POP     ECX
-        POP     EAX
-        POP     EBP
-        RET     4
-    )");
+    return x;
 }
 
-Single __naked __fastcall LBSVector::Int(Single v)
+Extended __fastcall LBSVector::Int(Extended x)
 {
-    __asm__(R"(.intel_syntax noprefix
-        PUSH    EBP
-        MOV     EBP, ESP
-        SUB     ESP,4
-        FSTCW   [ESP]
-        FLDCW   [0x005DD648]
-        FLD     [EBP+8]
-        FRNDINT
-        FLDCW   [ESP]
-        ADD     ESP,4
-        POP     EBP
-        RET     4
-    )");
+    return (DWORD)x;
 }
 
-Single __naked __fastcall LBSVector::Round(Single v)
+Integer __fastcall LBSVector::Round(Single x)
 {
-    __asm__(R"(.intel_syntax noprefix
-        PUSH    EBP
-        MOV     EBP, ESP
-        SUB     ESP,4
-        FLD     [EBP+8]
-        FISTP   [ESP]
-        POP     EAX
-        POP     EBP
-        RET     4
-    )");
+    return std::round(x);
+}
+
+Single __fastcall LBSVector::FP16To32(Smallint x)
+{
+    DWORD Result{};
+    if (x)
+    {
+        // Sign
+        Result |= ((x & 0x8000) >> 15 << 31);
+        // Exponent
+        Result |= ((((x & 0x7800) >> 11) - 7 + 127) << 23);
+        // Fraction
+        Result |= ((x & 0x7FF) << 12);
+    }
+
+    return *(Single*)&Result;
+}
+
+LBSVector::TLBSColor __fastcall LBSVector::ColorMake(Byte R, Byte G, Byte B, Byte A)
+{
+    return {B, G, R, A};
 }
 
 LBSVector::TVector2s __fastcall LBSVector::VectorAdd2s(TVector2s Pos, Word X, Word Y)
@@ -103,10 +90,13 @@ Initialization _LBSVector {
     {0x00459834, LBSVector::Tan, true},
     {0x00459844, LBSVector::ArcCos, true},
     {0x00459878, LBSVector::ArcTan2, true},
-    {0x00459888, LBSVector::NormalizeAngle, false},
-    {0x00459908, LBSVector::Trunc, false},
-    {0x00459928, LBSVector::Int, false},
+    {0x00459888, LBSVector::NormalizeAngle, true},
+    {0x00459908, LBSVector::Trunc, true},
+    {0x00459928, LBSVector::Int, true},
     {0x00459948, LBSVector::Round, true},
-
+    {0x0045995C, LBSVector::FP16To32, true},
+    
+    {0x004599A8, LBSVector::ColorMake, true},
+    
     {0x004599D4, LBSVector::VectorAdd2s},
 };

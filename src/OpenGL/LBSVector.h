@@ -7,7 +7,7 @@ namespace LBSVector
 {
     struct TLBSColor
     {
-        Shortint B, G, R, A;
+        Byte B, G, R, A;
     };
 
     struct TVector2s
@@ -70,9 +70,12 @@ namespace LBSVector
     Single __fastcall ArcCos(Single);
     Single __fastcall ArcTan2(Single, Single);
     Single __fastcall NormalizeAngle(Single);
-    Integer __naked __fastcall Trunc(Single);
-    Single __naked __fastcall Int(Single);
-    Single __naked __fastcall Round(Single);
+    Integer __fastcall Trunc(Single);
+    Extended __fastcall Int(Extended);
+    Integer __fastcall Round(Single);
+    Single __fastcall FP16To32(Smallint);
+
+    TLBSColor __fastcall ColorMake(Byte, Byte, Byte, Byte);
 
     TVector2s __fastcall VectorAdd2s(TVector2s, Word, Word);
 }

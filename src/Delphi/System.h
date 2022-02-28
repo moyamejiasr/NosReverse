@@ -9,6 +9,8 @@ typedef signed char Shortint;
 typedef short Smallint;
 typedef int Integer;
 typedef float Single;
+typedef double Double;
+typedef long double Extended;
 
 typedef char AnsiChar;
 typedef AnsiChar* PAnsiChar;
