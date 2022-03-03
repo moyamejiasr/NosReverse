@@ -78,17 +78,40 @@ LBSVector::TLBSColor __fastcall LBSVector::ColorMake(Byte R, Byte G, Byte B, Byt
     return {B, G, R, A};
 }
 
-LBSVector::TVector2s __fastcall LBSVector::VectorMake2s(Word X, Word Y)
+LBSVector::TVector2s __fastcall LBSVector::VectorMake2s(Smallint X, Smallint Y)
 {
     return {X, Y};
 }
 
-LBSVector::TVector2s __fastcall LBSVector::VectorAdd2s(TVector2s Pos, Word X, Word Y)
+LBSVector::TVector2s __fastcall LBSVector::VectorAdd2s(TVector2s Pos, Smallint X, Smallint Y)
 {
-    TVector2s Result = Pos;
-    Result.X += X;
-    Result.Y += Y;
+    TVector2s Result = Pos; Result.X += X; Result.Y += Y;
     return Result;
+}
+
+Boolean __fastcall LBSVector::PointInRect(TVector2s Point, TLBSRect Rect)
+{
+    TVector2s *Lt = &Rect.LeftTop, *Rb = &Rect.RightBottom;
+    return (Lt->X <= Point.X && Point.X <= Rb->X)
+        && (Lt->Y <= Point.Y && Point.Y <= Rb->Y);
+}
+
+Boolean __fastcall LBSVector::PointInRect2(Smallint PtX, Smallint PtY, 
+    Smallint Left, Smallint Bottom, Smallint Right, Smallint Top)
+{
+    return Left <= PtX && PtX <= Right && PtY >= Bottom && PtY <= Top;
+}
+
+Boolean __fastcall LBSVector::Vec2InVec4(TVector4s Square, TVector2s Point)
+{
+    return (Square.X <= Point.X && Point.X < Square.Z)
+        && (Square.Y <= Point.Y && Point.Y < Square.W);
+}
+
+Boolean __fastcall LBSVector::Vec2InVec42(Smallint Left, Smallint Bottom, Smallint Right, Smallint Top,
+        Smallint PtX, Smallint PtY)
+{
+    return Left <= PtX && Right > PtX && Bottom <= PtY && PtY < Top;
 }
 
 Initialization _LBSVector {
@@ -107,4 +130,12 @@ Initialization _LBSVector {
     {0x004599A8, LBSVector::ColorMake, true},
     {0x004599C4, LBSVector::VectorMake2s, true},
     {0x004599D4, LBSVector::VectorAdd2s, true},
+    {0x004599F4, LBSVector::PointInRect, true},
+    {0x00459A28, LBSVector::PointInRect2, true},
+    {0x00459A4C, LBSVector::Vec2InVec4, false},
+    {0x00459A80, LBSVector::Vec2InVec42, false},
 };
+
+// TODO:
+// - Fix scrolling back when max zoom
+// - Fix vector functions

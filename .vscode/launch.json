@@ -9,6 +9,7 @@
             "request": "launch", "stopAtEntry": false,
             "program": "${workspaceFolder}\\bin\\NTLauncher.exe",
             "console": "internalConsole", "cwd": "${workspaceFolder}\\bin",
+            "preLaunchTask": "${defaultBuildTask}",
             "environment": [
                 { "name": "NosPath", "value": "C:\\Users\\rmoya\\Documents\\Global" },
             ],
