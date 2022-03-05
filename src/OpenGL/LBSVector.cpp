@@ -54,7 +54,7 @@ Extended __fastcall LBSVector::Int(Extended X)
 
 Integer __fastcall LBSVector::Round(Single X)
 {
-    return X;
+    return std::round(X);
 }
 
 Single __fastcall LBSVector::FP16To32(Word X)
@@ -89,9 +89,9 @@ LBSVector::TVector2s __fastcall LBSVector::VectorAdd2s(TVector2s Pos, Smallint X
     return Result;
 }
 
-Boolean __fastcall LBSVector::PointInRect(TVector2s Point, TLBSRect Rect)
+Boolean __fastcall LBSVector::PointInRect(TVector2s Point, TLBSRect* Rect)
 {
-    TVector2s *Lt = &Rect.LeftTop, *Rb = &Rect.RightBottom;
+    TVector2s *Lt = &Rect->LeftTop, *Rb = &Rect->RightBottom;
     return (Lt->X <= Point.X && Point.X <= Rb->X)
         && (Lt->Y <= Point.Y && Point.Y <= Rb->Y);
 }
@@ -102,10 +102,10 @@ Boolean __fastcall LBSVector::PointInRect2(Smallint PtX, Smallint PtY,
     return Left <= PtX && PtX <= Right && PtY >= Bottom && PtY <= Top;
 }
 
-Boolean __fastcall LBSVector::Vec2InVec4(TVector4s Square, TVector2s Point)
+Boolean __fastcall LBSVector::Vec2InVec4(TVector4s* Square, TVector2s Point)
 {
-    return (Square.X <= Point.X && Point.X < Square.Z)
-        && (Square.Y <= Point.Y && Point.Y < Square.W);
+    return (Square->X <= Point.X && Point.X < Square->Z)
+        && (Square->Y <= Point.Y && Square->W > Point.Y);
 }
 
 Boolean __fastcall LBSVector::Vec2InVec42(Smallint Left, Smallint Bottom, Smallint Right, Smallint Top,
@@ -132,10 +132,6 @@ Initialization _LBSVector {
     {0x004599D4, LBSVector::VectorAdd2s, true},
     {0x004599F4, LBSVector::PointInRect, true},
     {0x00459A28, LBSVector::PointInRect2, true},
-    {0x00459A4C, LBSVector::Vec2InVec4, false},
-    {0x00459A80, LBSVector::Vec2InVec42, false},
+    {0x00459A4C, LBSVector::Vec2InVec4, true},
+    {0x00459A80, LBSVector::Vec2InVec42, true},
 };
-
-// TODO:
-// - Fix scrolling back when max zoom
-// - Fix vector functions
