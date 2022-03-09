@@ -39,9 +39,12 @@ struct VMT_ClassDefinition
 
 namespace System
 {
+	void __fastcall Assert(String, const char*, Integer);
     Integer __fastcall ParamCount();
     void __fastcall ParamStr(Integer, PString);
+	void __fastcall LStrClr(PString);
     void __fastcall LStrCopy(String, Integer, Integer, PString);
+    void __fastcall LStrCatN(PString, Integer);
     Integer __fastcall LStrCmp(String, String);
 	PChar __fastcall LStrToPChar(String);
 
@@ -56,4 +59,6 @@ namespace System
 	void __fastcall ClassDestroy(Pointer);
 	Pointer __fastcall AfterConstruction(PObject);
 	void __fastcall BeforeDestruction(PObject, Boolean);
+
+	Pointer __cdecl GetMemory(Integer);
 };

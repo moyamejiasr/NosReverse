@@ -20,15 +20,17 @@
 
 // Bugfix stack issue related to ClassCreate
 // Declaring this creates an extra stack pos
-// that will be used by the fn to store data
+// that will be used by method to store data
 #define CLASSCREATE_STUD volatile int _{}
 
-// Workaround for c++ config
+// Workaround for VSC++ config file
 #ifdef _MSVC
 #define __naked
+#define __packed
 #define __asm__
 #else
 #define __naked __attribute__((naked))
+#define __packed __attribute__((packed))
 #endif
 
 // Windows MessageBox
