@@ -10,13 +10,11 @@ VMT_ClassDefinition* LBSUICtrl::TLBSWidget::Class = Cast(0x0046DB9C);
 LBSUICtrl::PLBSWidget __fastcall LBSUICtrl::TLBSWidget::Create(Pointer AClass, Boolean Alloc, PLBSWidget FParent)
 {
     PLBSWidget Self = (PLBSWidget)AClass;
-    if ( Alloc )
+    if (Alloc)
     {
         CLASSCREATE_STUD;
         Self = (PLBSWidget)System::ClassCreate(Self, Alloc);
     }
-    if ( Alloc )
-        Self = (PLBSWidget)System::ClassCreate(AClass, Alloc);
 
     Self->Parent = FParent;
     Self->FocusChild = 0;

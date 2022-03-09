@@ -20,6 +20,11 @@ Integer __fastcall System::LStrCmp(String, String)
     return 0;
 }
 
+PChar __fastcall System::LStrToPChar(PChar)
+{
+    return nullptr;
+}
+
 void __fastcall System::TObject::Destroy(PObject Self, Boolean Alloc)
 {
 
@@ -55,6 +60,7 @@ Initialization _System {
     {0x0040324C, System::ParamStr},
     {0x00405108, System::LStrCopy},
     {0x00404FF4, System::LStrCmp},
+    {0x004050A8, System::LStrToPChar},
 
     {0x00403E00, System::TObject::Destroy},
     {0x00403E10, System::TObject::Free},

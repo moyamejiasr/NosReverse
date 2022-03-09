@@ -2,12 +2,15 @@
 #include "../Common.h"
 
 typedef void* Pointer;
+typedef char Char;
+typedef Char *PChar;
 typedef unsigned char Byte;
 typedef bool Boolean;
 typedef unsigned short Word;
 typedef signed char Shortint;
 typedef short Smallint;
 typedef int Integer;
+typedef long long Int64;
 typedef float Single;
 typedef double Double;
 typedef long double Extended;
@@ -40,6 +43,7 @@ namespace System
     void __fastcall ParamStr(Integer, PString);
     void __fastcall LStrCopy(String, Integer, Integer, PString);
     Integer __fastcall LStrCmp(String, String);
+	PChar __fastcall LStrToPChar(String);
 
 	typedef struct TObject
 	{
