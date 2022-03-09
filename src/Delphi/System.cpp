@@ -1,9 +1,8 @@
 #include "System.h"
 
-void __fastcall System::Assert(String Message, const char* Filename, Integer LineNumber)
+void __fastcall System::Assert(String Message, Literal Filename, Integer LineNumber)
 {
-    CERR("Error at " << Filename << ":" << LineNumber << "\n    " << Message);
-    CINT;
+
 }
 
 Integer __fastcall System::ParamCount()
@@ -26,7 +25,7 @@ void __fastcall System::LStrCopy(String, Integer, Integer, PString)
 
 }
 
-void __fastcall System::LStrCatN(PString, Integer)
+void __fastcall System::LStrCat4(PString, Integer, Pointer, Literal, Literal, Literal)
 {
 
 }
@@ -76,13 +75,18 @@ Pointer __cdecl System::GetMemory(Integer Size)
     return nullptr;
 }
 
+Integer __cdecl System::FreeMemory(Pointer)
+{
+    return 0;
+}
+
 Initialization _System {
     {0x004031E4, System::Assert},
     {0x004031E4, System::ParamCount},
     {0x0040324C, System::ParamStr},
     {0x00404BD8, System::LStrClr},
     {0x00405108, System::LStrCopy},
-    {0x00404F68, System::LStrCatN},
+    {0x00404F68, System::LStrCat4},
     {0x00404FF4, System::LStrCmp},
     {0x004050A8, System::LStrToPChar},
 
@@ -95,4 +99,5 @@ Initialization _System {
     {0x004041B0, System::BeforeDestruction},
 
     {0x00406C08, System::GetMemory},
+    {0x00406C20, System::FreeMemory},
 };

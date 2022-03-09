@@ -43,16 +43,17 @@ Initialization _Main {
     {0x005DB678, EntryPoint, true},
 };
 
+HANDLE hConsole = nullptr;
+
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD dReason, LPVOID)
 {
     if (dReason == DLL_PROCESS_ATTACH)
     {
-        AllocConsole();
-        freopen("CON", "w", stdout);
-        freopen("CON", "r", stdin);
-        freopen("CON", "w", stderr);
         DisableThreadLibraryCalls(hModule);
-        SetConsoleTitle("NT Detourer Lib v1__");
+        AllocConsole(); hConsole = GetStdHandle(STD_ERROR_HANDLE);
+        freopen("CON", "w", stdout); freopen("CON", "w", stderr);
+        freopen("CON", "r", stdin);
+        SetConsoleTitleA("NT Detourer Lib v1__");
     }
     return TRUE;
 }

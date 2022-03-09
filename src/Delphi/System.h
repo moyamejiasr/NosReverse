@@ -4,6 +4,7 @@
 typedef void* Pointer;
 typedef char Char;
 typedef Char *PChar;
+typedef const char* Literal;
 typedef unsigned char Byte;
 typedef bool Boolean;
 typedef unsigned short Word;
@@ -39,12 +40,12 @@ struct VMT_ClassDefinition
 
 namespace System
 {
-	void __fastcall Assert(String, const char*, Integer);
+	void __fastcall Assert(String, Literal, Integer);
     Integer __fastcall ParamCount();
     void __fastcall ParamStr(Integer, PString);
 	void __fastcall LStrClr(PString);
     void __fastcall LStrCopy(String, Integer, Integer, PString);
-    void __fastcall LStrCatN(PString, Integer);
+    void __fastcall LStrCat4(PString, Integer, Pointer, Literal, Literal, Literal);
     Integer __fastcall LStrCmp(String, String);
 	PChar __fastcall LStrToPChar(String);
 
@@ -61,4 +62,5 @@ namespace System
 	void __fastcall BeforeDestruction(PObject, Boolean);
 
 	Pointer __cdecl GetMemory(Integer);
+	Integer __cdecl FreeMemory(Pointer);
 };

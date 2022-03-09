@@ -92,10 +92,7 @@ LBSCommon::PLBSMultiFileSimpleStream __fastcall LBSCommon::TLBSMultiFileSimpleSt
     LBSCommon::TLBSReadFileStreamEx::Create(Self, 0, FPath);
     if (!LBSCommon::TLBSReadFileStream::IsOpen(Self))
     {
-        String Message = nullptr;
-        //System::LStrCatN(&Message, 3, 0, "\r\r", FPath, "MultiFileStream ValidFile Error!!\r\r"); TODO: Implement variadic call
-        System::Assert(Message, __FILE__, __LINE__);
-        System::LStrClr(&Message);
+        CERR("Error, cannot load file " << FPath);
     }
     Self->Seek(Self, 0, Classes::soBeginning);
     Self->Read(Self, (PChar)GBuffer, 21);
@@ -115,6 +112,17 @@ LBSCommon::PLBSMultiFileSimpleStream __fastcall LBSCommon::TLBSMultiFileSimpleSt
     return Self;
 }
 
+void __fastcall LBSCommon::TLBSMultiFileSimpleStream::Destroy(PLBSMultiFileSimpleStream Self, Boolean Alloc)
+{
+    System::BeforeDestruction(Self, Alloc);
+
+    if (Self->UnkPtr) System::FreeMemory(Self->UnkPtr);
+    System::FreeMemory(Self->FMemData);
+    LBSCommon::TLBSReadFileStreamEx::Destroy(Self, Alloc & 0xFC);
+
+    if (Alloc) System::ClassDestroy(Self);
+}
+
 Initialization _LBSCommon {
     {0x0046A140, LBSCommon::TLBSReadFileStream::Create, true},
     {0x0046A194, LBSCommon::TLBSReadFileStream::Destroy, true},
@@ -127,4 +135,5 @@ Initialization _LBSCommon {
     {0x0046A290, LBSCommon::TLBSReadFileStreamEx::Destroy, true},
 
     {0x0046A2C8, LBSCommon::TLBSMultiFileSimpleStream::Create, true},
+    {0x0046A458, LBSCommon::TLBSMultiFileSimpleStream::Destroy, true},
 };

@@ -12,11 +12,18 @@
 #define STR(X) (std::stringstream() << X).str()
 
 // IO macros
+extern HANDLE hConsole;
 #define HEX(X) std::hex << X << std::dec
-#define COUT(X) std::cout << "[*] " << X << std::endl
-#define CERR(X) std::cout << "[!] " << X << std::endl
-#define CGET(X) std::cin >> X
+#define CBLUE SetConsoleTextAttribute(hConsole, 1)
+#define CGREEN SetConsoleTextAttribute(hConsole, 2)
+#define CRED SetConsoleTextAttribute(hConsole, 4)
+#define CYELLOW SetConsoleTextAttribute(hConsole, 6)
+#define CWHITE SetConsoleTextAttribute(hConsole, 7)
 #define CINT std::getchar()
+#define CGET(X) std::cin >> X
+#define COUT(X) std::cout << "[*] " << X << std::endl
+#define CWAR(X) CYELLOW; std::cout << "[?] " << X << std::endl; CWHITE
+#define CERR(X) CRED; std::cout << "[!] " << X << std::endl; CINT; ExitProcess(-1)
 
 // Bugfix stack issue related to ClassCreate
 // Declaring this creates an extra stack pos
@@ -35,7 +42,7 @@
 
 // Windows MessageBox
 #define GErrMessage(X) MessageBoxA(0, X, "Unexpected error", MB_SYSTEMMODAL | MB_ICONERROR)
-#define GNotMessage(X) MessageBoxA(0, X, "Process Launcher", MB_SYSTEMMODAL | MB_ICONINFORMATION)
+#define GDlgMessage(X) MessageBoxA(0, X, "Process Launcher", MB_SYSTEMMODAL | MB_ICONINFORMATION)
 
 // Delphi String
 template <std::size_t N>
