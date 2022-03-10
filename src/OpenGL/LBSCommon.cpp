@@ -1,5 +1,42 @@
 #include "LBSCommon.h"
 
+Boolean __fastcall LBSCommon::IndexFromId(TLBSNTDataFile* Header, Integer FId, Integer* Index)
+{
+    if ( Header->FHeader.FIdsOrdered && FId < Header->FHeader.FCount )
+    {
+        *Index = FId;
+        return true;
+    }
+    else
+    {
+        Integer AltIndex, i = 0;
+        Integer FCount = Header->FHeader.FCount - 1;
+        if ( FCount >= 0 )
+        {
+            do
+            {
+                AltIndex = (FCount + i) / 2;
+                Integer TId = Header->FEntries[AltIndex].FId;
+                if ( FId <= TId )
+                {
+                    FCount = AltIndex - 1;
+                    if ( FId == TId )
+                    {
+                        *Index = AltIndex;
+                        return true;
+                    }
+                }
+                else
+                {
+                    i = AltIndex + 1;
+                }
+            }
+            while ( FCount >= i );
+        }
+    }
+    return false;
+}
+
 LBSCommon::PLBSReadFileStream __fastcall LBSCommon::TLBSReadFileStream::Create(Pointer AClass, Boolean Alloc, String FPath)
 {
     PLBSReadFileStream Self = (PLBSReadFileStream)AClass;
@@ -99,12 +136,12 @@ LBSCommon::PLBSMultiFileSimpleStream __fastcall LBSCommon::TLBSMultiFileSimpleSt
 
     // Get memory for header and entries
     Integer Count = ((TLBSNTDataFile*)GBuffer)->FHeader.FCount;
-    Self->FMemData = (TLBSNTDataFile*)System::GetMemory(sizeof(TLBSNTDataFile::TLBSNTDataEntry) * Count + sizeof(TLBSNTDataFile::TLBSNTDataHeader));
+    Self->FDataFile = (TLBSNTDataFile*)System::GetMemory(sizeof(TLBSNTDataFile::Entry) * Count + sizeof(TLBSNTDataFile::Header));
 
     // Copy Header
-    memcpy(Self->FMemData, (PChar)GBuffer, sizeof(TLBSNTDataFile));
+    memcpy(Self->FDataFile, (PChar)GBuffer, sizeof(TLBSNTDataFile));
     // Read entries
-    Self->Read(Self, (PChar)Self->FMemData->FEntries, sizeof(TLBSNTDataFile::TLBSNTDataEntry) * Self->FMemData->FHeader.FCount);
+    Self->Read(Self, (PChar)Self->FDataFile->FEntries, sizeof(TLBSNTDataFile::Entry) * Self->FDataFile->FHeader.FCount);
     Self->UnkPtr = 0;
     Self->Unknown3 = (Pointer)-1;
 
@@ -117,13 +154,45 @@ void __fastcall LBSCommon::TLBSMultiFileSimpleStream::Destroy(PLBSMultiFileSimpl
     System::BeforeDestruction(Self, Alloc);
 
     if (Self->UnkPtr) System::FreeMemory(Self->UnkPtr);
-    System::FreeMemory(Self->FMemData);
+    System::FreeMemory(Self->FDataFile);
     LBSCommon::TLBSReadFileStreamEx::Destroy(Self, Alloc & 0xFC);
 
     if (Alloc) System::ClassDestroy(Self);
 }
 
+void __fastcall LBSCommon::TLBSMultiFileSimpleStream::GetIndexEntry(PLBSMultiFileSimpleStream Self, Integer Index, TLBSNTDataFile::Entry *Result)
+{
+    *Result = Self->FDataFile->FEntries[Index];
+}
+
+void __fastcall LBSCommon::TLBSMultiFileSimpleStream::ReadIndexHeader(PLBSMultiFileSimpleStream Self, Integer Index, PChar Buffer, Integer* Result)
+{
+    if ( Index < Self->FDataFile->FHeader.FCount )
+    {
+        // Move to start of data & read up to FCState
+        SetFilePointer(Self->FHandle, Self->FDataFile->FEntries[Index].FOffset, 0, 0);
+        ReadFile(Self->FHandle, Buffer, sizeof(TLBSNTDataItem::Header), (LPDWORD)Result, 0);
+        // Return the position past read
+        *Result = Self->FDataFile->FEntries[Index].FOffset + sizeof(TLBSNTDataItem::Header);
+    }
+}
+
+void __fastcall LBSCommon::TLBSMultiFileSimpleStream::ReadIdHeader(PLBSMultiFileSimpleStream Self, Integer FId, PChar Buffer, Integer* Result)
+{
+    Integer Index;
+    if ( LBSCommon::IndexFromId(Self->FDataFile, FId, &Index) )
+    {
+        // Move to start of data & read up to FCState
+        SetFilePointer(Self->FHandle, Self->FDataFile->FEntries[Index].FOffset, 0, 0);
+        ReadFile(Self->FHandle, Buffer, sizeof(TLBSNTDataItem::Header), (LPDWORD)Result, 0);
+        // Return the position past read
+        *Result = Self->FDataFile->FEntries[Index].FOffset + sizeof(TLBSNTDataItem::Header);
+    }
+}
+
 Initialization _LBSCommon {
+    {0x0046965C, LBSCommon::IndexFromId, true},
+
     {0x0046A140, LBSCommon::TLBSReadFileStream::Create, true},
     {0x0046A194, LBSCommon::TLBSReadFileStream::Destroy, true},
     {0x0046A1C4, LBSCommon::TLBSReadFileStream::Read, true},
@@ -136,4 +205,7 @@ Initialization _LBSCommon {
 
     {0x0046A2C8, LBSCommon::TLBSMultiFileSimpleStream::Create, true},
     {0x0046A458, LBSCommon::TLBSMultiFileSimpleStream::Destroy, true},
+    {0x0046A498, LBSCommon::TLBSMultiFileSimpleStream::GetIndexEntry, true},
+    {0x0046A4B0, LBSCommon::TLBSMultiFileSimpleStream::ReadIndexHeader, true},
+    {0x0046A510, LBSCommon::TLBSMultiFileSimpleStream::ReadIdHeader, true},
 };

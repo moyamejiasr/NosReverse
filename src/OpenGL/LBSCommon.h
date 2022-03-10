@@ -9,32 +9,37 @@ namespace LBSCommon
     typedef struct TLBSReadFileStreamEx *PLBSReadFileStreamEx;
     typedef struct TLBSMultiFileSimpleStream *PLBSMultiFileSimpleStream;
 
-    struct __packed TLBSNTDataItem
-    {
-        Integer FDate;
-        Integer FSize;
-        Integer FCSize;
-        Boolean FCState;
-        PChar FData;
-    };
-
     struct __packed TLBSNTDataFile
     {
-        struct __packed TLBSNTDataHeader
+        struct __packed Header
         {
             Char FSign[12];
             Integer dword;
             Integer FCount;
             Byte FIdsOrdered;
         } FHeader;
-        struct TLBSNTDataEntry
+        struct Entry
         {
             Integer FId;
-            TLBSNTDataItem *FOffset;
+            Integer FOffset;
         } FEntries[];
     };
 
+    struct __packed TLBSNTDataItem
+    {
+        struct __packed Header
+        {
+            Integer FDate;
+            Integer FSize;
+            Integer FCSize;
+            Boolean FCState;
+        } FHeader;
+        PChar FData;
+    };
+
     PChar *GBuffer = Cast(0x005EDE24);
+
+    Boolean __fastcall IndexFromId(TLBSNTDataFile*, Integer, Integer*);
 
     struct TLBSReadFileStream: Classes::TStream
     {
@@ -65,11 +70,14 @@ namespace LBSCommon
     {
         static VMT_ClassDefinition* Class;
 
-        TLBSNTDataFile* FMemData;
+        TLBSNTDataFile* FDataFile;
         Pointer UnkPtr;
         Pointer Unknown3;
 
         static PLBSMultiFileSimpleStream __fastcall Create(Pointer, Boolean, String);
         static void __fastcall Destroy(PLBSMultiFileSimpleStream, Boolean);
+        static void __fastcall GetIndexEntry(PLBSMultiFileSimpleStream, Integer, TLBSNTDataFile::Entry*);
+        static void __fastcall ReadIndexHeader(PLBSMultiFileSimpleStream, Integer, PChar, Integer*);
+        static void __fastcall ReadIdHeader(PLBSMultiFileSimpleStream, Integer, PChar, Integer*);
     };
 }
