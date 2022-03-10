@@ -38,6 +38,8 @@ namespace LBSCommon
     };
 
     PChar *GBuffer = Cast(0x005EDE24);
+    TLBSNTDataItem::Header* GHeader = Cast(0x0076DE58);
+    Integer* GNumRead = Cast(0x0076DE68);
 
     Boolean __fastcall IndexFromId(TLBSNTDataFile*, Integer, Integer*);
 
@@ -79,5 +81,6 @@ namespace LBSCommon
         static void __fastcall GetIndexEntry(PLBSMultiFileSimpleStream, Integer, TLBSNTDataFile::Entry*);
         static void __fastcall ReadIndexHeader(PLBSMultiFileSimpleStream, Integer, PChar, Integer*);
         static void __fastcall ReadIdHeader(PLBSMultiFileSimpleStream, Integer, PChar, Integer*);
+        static Boolean __fastcall ReadIndexItem(PLBSMultiFileSimpleStream, Integer, Pointer*, Boolean);
     };
 }

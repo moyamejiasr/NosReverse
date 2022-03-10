@@ -70,12 +70,17 @@ void __fastcall System::BeforeDestruction(PObject Self, Boolean Alloc)
 
 }
 
-Pointer __cdecl System::GetMemory(Integer Size)
+Pointer __cdecl System::GetMemory(Integer)
 {
     return nullptr;
 }
 
 Integer __cdecl System::FreeMemory(Pointer)
+{
+    return 0;
+}
+
+Pointer __cdecl System::ReallocMemory(Pointer, Integer)
 {
     return 0;
 }
@@ -100,4 +105,5 @@ Initialization _System {
 
     {0x00406C08, System::GetMemory},
     {0x00406C20, System::FreeMemory},
+    {0x00406C38, System::ReallocMemory},
 };

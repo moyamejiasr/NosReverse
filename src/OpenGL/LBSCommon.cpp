@@ -190,6 +190,20 @@ void __fastcall LBSCommon::TLBSMultiFileSimpleStream::ReadIdHeader(PLBSMultiFile
     }
 }
 
+Boolean __fastcall LBSCommon::TLBSMultiFileSimpleStream::ReadIndexItem(PLBSMultiFileSimpleStream Self, Integer Id, Pointer* Buffer, Boolean Realloc)
+{
+    Integer Index;
+    if (!LBSCommon::IndexFromId(Self->FDataFile, Id, &Index))
+        return false;
+
+    SetFilePointer(Self->FHandle, Self->FDataFile->FEntries[Index].FOffset, 0, 0);
+    ReadFile(Self->FHandle, LBSCommon::GHeader, sizeof(TLBSNTDataItem::Header), (LPDWORD)LBSCommon::GNumRead, 0);
+
+    if (Realloc) *Buffer = System::ReallocMemory(*Buffer, LBSCommon::GHeader->FSize);
+    ReadFile(Self->FHandle, *Buffer, LBSCommon::GHeader->FSize, (LPDWORD)LBSCommon::GNumRead, 0);
+    return true;
+}
+
 Initialization _LBSCommon {
     {0x0046965C, LBSCommon::IndexFromId, true},
 
@@ -208,4 +222,5 @@ Initialization _LBSCommon {
     {0x0046A498, LBSCommon::TLBSMultiFileSimpleStream::GetIndexEntry, true},
     {0x0046A4B0, LBSCommon::TLBSMultiFileSimpleStream::ReadIndexHeader, true},
     {0x0046A510, LBSCommon::TLBSMultiFileSimpleStream::ReadIdHeader, true},
+    {0x0046A57C, LBSCommon::TLBSMultiFileSimpleStream::ReadIndexItem, true},
 };

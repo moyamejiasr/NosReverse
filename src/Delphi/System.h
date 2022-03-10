@@ -63,4 +63,5 @@ namespace System
 
 	Pointer __cdecl GetMemory(Integer);
 	Integer __cdecl FreeMemory(Pointer);
+	Pointer __cdecl ReallocMemory(Pointer, Integer);
 };

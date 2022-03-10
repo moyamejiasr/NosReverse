@@ -42,7 +42,7 @@ extern HANDLE hConsole;
 
 // Windows MessageBox
 #define GErrMessage(X) MessageBoxA(0, X, "Unexpected error", MB_SYSTEMMODAL | MB_ICONERROR)
-#define GDlgMessage(X) MessageBoxA(0, X, "Process Launcher", MB_SYSTEMMODAL | MB_ICONINFORMATION)
+#define GDlgMessage(X) MessageBoxA(0, X, "Process NTRouter", MB_SYSTEMMODAL | MB_ICONINFORMATION)
 
 // Delphi String
 template <std::size_t N>
