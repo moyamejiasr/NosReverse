@@ -8,6 +8,7 @@ namespace LBSCommon
     typedef struct TLBSReadFileStream *PLBSReadFileStream;
     typedef struct TLBSReadFileStreamEx *PLBSReadFileStreamEx;
     typedef struct TLBSMultiFileSimpleStream *PLBSMultiFileSimpleStream;
+    typedef struct TLBSMultiFileMemStream *PLBSMultiFileMemStream;
 
     struct __packed TLBSNTDataFile
     {
@@ -82,5 +83,16 @@ namespace LBSCommon
         static void __fastcall ReadIndexHeader(PLBSMultiFileSimpleStream, Integer, PChar, Integer*);
         static void __fastcall ReadIdHeader(PLBSMultiFileSimpleStream, Integer, PChar, Integer*);
         static Boolean __fastcall ReadIndexItem(PLBSMultiFileSimpleStream, Integer, Pointer*, Boolean);
+    };
+
+    struct TLBSMultiFileMemStream: System::TObject
+    {
+        static VMT_ClassDefinition* Class;
+
+        Pointer __vftble;
+        PChar FFullData;
+        Integer FSize;
+
+        static PLBSMultiFileMemStream __fastcall Create(Pointer, Boolean, String);
     };
 }

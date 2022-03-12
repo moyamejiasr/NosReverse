@@ -37,6 +37,8 @@ Boolean __fastcall LBSCommon::IndexFromId(TLBSNTDataFile* Header, Integer FId, I
     return false;
 }
 
+VMT_ClassDefinition* LBSCommon::TLBSReadFileStream::Class = Cast(0x00469330);
+
 LBSCommon::PLBSReadFileStream __fastcall LBSCommon::TLBSReadFileStream::Create(Pointer AClass, Boolean Alloc, String FPath)
 {
     PLBSReadFileStream Self = (PLBSReadFileStream)AClass;
@@ -204,6 +206,32 @@ Boolean __fastcall LBSCommon::TLBSMultiFileSimpleStream::ReadIndexItem(PLBSMulti
     return true;
 }
 
+LBSCommon::PLBSMultiFileMemStream __fastcall LBSCommon::TLBSMultiFileMemStream::Create(Pointer AClass, Boolean Alloc, String FPath)
+{
+    PLBSMultiFileMemStream Self = (PLBSMultiFileMemStream)AClass;
+    if (Alloc)
+    {
+        CLASSCREATE_STUD;
+        Self = (PLBSMultiFileMemStream)System::ClassCreate(Self, Alloc);
+    }
+    System::TObject::Create(Self, 0);
+
+    PLBSReadFileStream FileStream = LBSCommon::TLBSReadFileStream::Create(TLBSReadFileStream::Class->SelfPtr, 1, FPath);
+    if (!LBSCommon::TLBSReadFileStream::IsOpen(FileStream))
+    {
+        CERR("Error, cannot load class file " << FPath);
+    }
+
+    Self->FSize = FileStream->GetSize(FileStream);
+    FileStream->Seek(FileStream, 0, 0);
+    Self->FFullData = (PChar)System::GetMemory(Self->FSize);
+    FileStream->Read(FileStream, Self->FFullData, Self->FSize);
+    System::TObject::Free(FileStream);
+
+    if (Alloc) System::AfterConstruction(Self); // TODO: See Unknown issue causes crash
+    return Self;
+}
+
 Initialization _LBSCommon {
     {0x0046965C, LBSCommon::IndexFromId, true},
 
@@ -223,4 +251,6 @@ Initialization _LBSCommon {
     {0x0046A4B0, LBSCommon::TLBSMultiFileSimpleStream::ReadIndexHeader, true},
     {0x0046A510, LBSCommon::TLBSMultiFileSimpleStream::ReadIdHeader, true},
     {0x0046A57C, LBSCommon::TLBSMultiFileSimpleStream::ReadIndexItem, true},
+    
+    {0x0046A60C, LBSCommon::TLBSMultiFileMemStream::Create, true},
 };

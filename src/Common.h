@@ -22,7 +22,7 @@ extern HANDLE hConsole;
 #define CINT std::getchar()
 #define CGET(X) std::cin >> X
 #define COUT(X) std::cout << "[*] " << X << std::endl
-#define CWAR(X) CYELLOW; std::cout << "[?] " << X << std::endl; CWHITE
+#define CWAR(X) CYELLOW; std::cout << "[?] " << X << std::endl; CWHITE; CINT
 #define CERR(X) CRED; std::cout << "[!] " << X << std::endl; CINT; ExitProcess(-1)
 
 // Bugfix stack issue related to ClassCreate

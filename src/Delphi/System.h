@@ -51,6 +51,7 @@ namespace System
 
 	typedef struct TObject
 	{
+		static TObject* __fastcall Create(Pointer, Boolean);
 		static void __fastcall Destroy(TObject*, Boolean);
 		static void __fastcall Free(TObject*);
 		
