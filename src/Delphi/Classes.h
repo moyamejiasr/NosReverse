@@ -5,10 +5,21 @@
 namespace Classes
 {
     typedef struct TList *PList;
+    typedef struct TPersistent *PPersistent;
+    typedef struct TInterfacedPersistent *PInterfacedPersistent;
     typedef struct TStream *PStream;
+
+    enum TSeekOrigin : unsigned char
+    {
+        soBeginning = 0x0,
+        soCurrent = 0x1,
+        soEnd = 0x2,
+    };
 
     struct TList: System::TObject
     {
+        static VMT_ClassDefinition* Class;
+
         Pointer FList;
         Integer FCount;
         Integer FCapacity;
@@ -25,16 +36,29 @@ namespace Classes
         static Integer __fastcall IndexOf(PList, Pointer);
         static void __fastcall Move(PList, Integer, Integer);
     };
+    ASSERT_SIZE(TList, 0x10);
 
-    enum TSeekOrigin : unsigned char
+    struct TPersistent: System::TObject
     {
-        soBeginning = 0x0,
-        soCurrent = 0x1,
-        soEnd = 0x2,
+        static VMT_ClassDefinition* Class;
+
+        virtual void __fastcall AssignTo(PPersistent Dest);
+        virtual void __fastcall DefineProperties(Pointer Filer);
+        virtual void __fastcall Assign(PPersistent Source);
+    };
+    ASSERT_SIZE(TPersistent, 0x04);
+
+    struct TInterfacedPersistent: TPersistent
+    {
+        static VMT_ClassDefinition* Class;
+
+        virtual Pointer __fastcall QueryInterface(Pointer IID, Pointer Obj);
     };
 
     struct TStream: System::TObject
     {
+        static VMT_ClassDefinition* Class;
+
         virtual Int64 __fastcall GetSize(PStream);
         virtual void __fastcall SetSize(PStream, Integer);
         virtual void __fastcall SetSize64(PStream, Int64);
@@ -43,4 +67,5 @@ namespace Classes
         virtual Integer __fastcall Seek(PStream, Integer, Word);
         virtual Int64 __fastcall Seek64(PStream, Int64, TSeekOrigin);
     };
+    ASSERT_SIZE(TStream, 0x04);
 }

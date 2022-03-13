@@ -4,6 +4,7 @@
 #include "../Delphi/Classes.h"
 #include "../Delphi/Graphics.h"
 #include "LBSVector.h"
+#include "LBSOpenGL12.h"
 
 namespace LBSCanvasTexture
 {
@@ -22,6 +23,10 @@ namespace LBSCanvasTexture
         Byte PixelFormat;
 
         virtual void __fastcall SetDimensions(Word x, Word y);
+
+        static PLBSCanvasTexture __fastcall Create(Pointer, Boolean, Smallint, Smallint, Byte);
+        static void __fastcall FixDimension(PLBSCanvasTexture, Smallint*);
+        static void __fastcall LoadTexture(PLBSCanvasTexture);
     };
     ASSERT_SIZE(TLBSCanvasTexture, 0x18);
 

@@ -5,7 +5,7 @@
             "defines": ["_DEBUG", "_MSVC"],
             "cppStandard": "c++11",
             "includePath": ["${workspaceFolder}/**"],
-            "intelliSenseMode": "windows-msvc-x64",
+            "intelliSenseMode": "windows-msvc-x86",
             "windowsSdkVersion": "10.0.22000.0"
         }
     ],

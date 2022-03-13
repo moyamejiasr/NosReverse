@@ -95,16 +95,13 @@ struct Initialization
                 DWORD tmp = route.Address;
                 route.Address = (DWORD)route.Function;
                 route.Function = (PVOID)tmp;
-            }
+            } else dCounter++;
 
             VirtualProtect((LPVOID)route.Address, 5, PAGE_EXECUTE_READWRITE, &OldProtect);
             // Inject code after unprotected
             const uint32_t RelAddr = (DWORD)route.Function - (route.Address + sizeof(Instruction));
             memcpy(Instruction + 1, &RelAddr, 4);
             memcpy((PVOID)route.Address, Instruction, sizeof(Instruction));
-
-            // Increase counter
-            dCounter++;
         }
     }
 };

@@ -11,6 +11,7 @@ typedef unsigned short Word;
 typedef signed char Shortint;
 typedef short Smallint;
 typedef int Integer;
+typedef unsigned int Cardinal;
 typedef long long Int64;
 typedef float Single;
 typedef double Double;
@@ -21,12 +22,22 @@ typedef AnsiChar* PAnsiChar;
 typedef PAnsiChar String;
 typedef String* PString;
 
+struct TPoint
+{
+  Integer X;
+  Integer Y;
+};
+
+struct TRect
+{
+    TPoint LeftTop, RightBottom;
+};
+
 struct TMethod
 {
   Pointer Code;
   Pointer Data;
 };
-
 
 struct VMT_ClassDefinition 
 {
@@ -47,6 +58,8 @@ struct VMT_ClassDefinition
 
 namespace System
 {
+    typedef struct TObject *PObject;
+
 	void __fastcall Assert(String, Literal, Integer);
     Integer __fastcall ParamCount();
     void __fastcall ParamStr(Integer, PString);
@@ -56,13 +69,15 @@ namespace System
     Integer __fastcall LStrCmp(String, String);
 	PChar __fastcall LStrToPChar(String);
 
-	typedef struct TObject
+	struct TObject
 	{
-		static TObject* __fastcall Create(Pointer, Boolean);
-		static void __fastcall Destroy(TObject*, Boolean);
-		static void __fastcall Free(TObject*);
-		
-	} *PObject;
+        static VMT_ClassDefinition* Class;
+
+		static PObject __fastcall Create(Pointer, Boolean);
+		static void __fastcall Destroy(PObject, Boolean);
+		static void __fastcall Free(PObject);
+	};
+    ASSERT_SIZE(TObject, 0x01);
 
 	PObject __fastcall ClassCreate(Pointer, Boolean);
 	void __fastcall ClassDestroy(Pointer);
