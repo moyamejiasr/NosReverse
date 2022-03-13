@@ -5,12 +5,15 @@
 #include "../Delphi/Graphics.h"
 #include "LBSVector.h"
 #include "LBSOpenGL12.h"
+#include "LBSCommon.h"
 
 namespace LBSCanvasTexture
 {
     typedef struct TLBSCanvasTexture *PLBSCanvasTexture;
     typedef struct TLBSCanvasTextureEX *PLBSCanvasTextureEX;
     typedef struct TLBSTextRender *PLBSTextRender;
+
+    void __fastcall RowTransform(Pointer, Pointer, Integer);
 
     struct TLBSCanvasTexture : System::TObject
     {
@@ -25,8 +28,11 @@ namespace LBSCanvasTexture
         virtual void __fastcall SetDimensions(Word x, Word y);
 
         static PLBSCanvasTexture __fastcall Create(Pointer, Boolean, Smallint, Smallint, Byte);
+        static void __fastcall Destroy(PLBSCanvasTexture, Boolean);
         static void __fastcall FixDimension(PLBSCanvasTexture, Smallint*);
+        static void __fastcall _SetDimensions(PLBSCanvasTexture, Smallint, Smallint);
         static void __fastcall LoadTexture(PLBSCanvasTexture);
+        static Boolean __fastcall ReloadBitmap(PLBSCanvasTexture);
     };
     ASSERT_SIZE(TLBSCanvasTexture, 0x18);
 

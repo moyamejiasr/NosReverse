@@ -1,5 +1,9 @@
 #include "LBSCommon.h"
 
+PChar* LBSCommon::GBuffer = Cast(0x005EDE24);
+LBSCommon::TLBSNTDataItem::Header* LBSCommon::GHeader = Cast(0x0076DE58);
+Integer* LBSCommon::GNumRead = Cast(0x0076DE68);
+
 Boolean __fastcall LBSCommon::IndexFromId(TLBSNTDataFile* Header, Integer FId, Integer* Index)
 {
     if ( Header->FHeader.FIdsOrdered && FId < Header->FHeader.FCount )

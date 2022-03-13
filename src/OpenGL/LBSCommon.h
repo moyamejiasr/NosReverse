@@ -38,9 +38,9 @@ namespace LBSCommon
         Char FData[];
     };
 
-    PChar *GBuffer = Cast(0x005EDE24);
-    TLBSNTDataItem::Header* GHeader = Cast(0x0076DE58);
-    Integer* GNumRead = Cast(0x0076DE68);
+    extern PChar* GBuffer;
+    extern TLBSNTDataItem::Header* GHeader;
+    extern Integer* GNumRead;
 
     Boolean __fastcall IndexFromId(TLBSNTDataFile*, Integer, Integer*);
 
