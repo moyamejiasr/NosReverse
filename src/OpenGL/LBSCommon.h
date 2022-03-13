@@ -100,6 +100,5 @@ namespace LBSCommon
         static void __fastcall Destroy(PLBSMultiFileMemStream, Boolean);
         static PChar __fastcall GetFromId(PLBSMultiFileMemStream, Integer);
     };
-    int test = sizeof(TLBSMultiFileMemStream);
     ASSERT_SIZE(TLBSMultiFileMemStream, 0xC);
 }

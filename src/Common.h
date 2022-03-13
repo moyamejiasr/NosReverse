@@ -45,7 +45,7 @@ extern HANDLE hConsole;
 #else
 #define __naked __attribute__((naked))
 #define __packed __attribute__((packed))
-#define ASSERT_SIZE(T, V) static_assert(sizeof(T) == V, "Struct size missmatch");
+#define ASSERT_SIZE(T, V) static_assert(sizeof(T) == V, "Struct size missmatch")
 #endif
 
 // Windows MessageBox
