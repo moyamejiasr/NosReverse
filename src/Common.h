@@ -5,6 +5,7 @@
 #include <string>
 #include <sstream>
 #include <iostream>
+#include <type_traits>
 #include <initializer_list>
 
 // String macros
@@ -30,14 +31,21 @@ extern HANDLE hConsole;
 // that will be used by method to store data
 #define CLASSCREATE_STUD volatile int _{}
 
+// Bugfix non-virtual structs lacking vtable
+// All Delphi classes inherit TObject, who
+// has negative virtual members and __vtable
+#define FORCE_VIRTUAL virtual void _vf() = 0
+
 // Workaround for VSC++ config file
 #ifdef _MSVC
 #define __naked
 #define __packed
 #define __asm__
+#define ASSERT_SIZE(T, V)
 #else
 #define __naked __attribute__((naked))
 #define __packed __attribute__((packed))
+#define ASSERT_SIZE(T, V) static_assert(sizeof(T) == V, "Struct size missmatch");
 #endif
 
 // Windows MessageBox

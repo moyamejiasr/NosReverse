@@ -228,8 +228,27 @@ LBSCommon::PLBSMultiFileMemStream __fastcall LBSCommon::TLBSMultiFileMemStream::
     FileStream->Read(FileStream, Self->FFullData, Self->FSize);
     System::TObject::Free(FileStream);
 
-    if (Alloc) System::AfterConstruction(Self); // TODO: See Unknown issue causes crash
+    if (Alloc) System::AfterConstruction(Self);
     return Self;
+}
+
+void __fastcall LBSCommon::TLBSMultiFileMemStream::Destroy(PLBSMultiFileMemStream Self, Boolean Alloc)
+{
+    System::BeforeDestruction(Self, Alloc);
+
+    if (Self->FFullData) System::FreeMemory(Self->FFullData);
+    System::TObject::Destroy(Self, Alloc & 0xFC);
+
+    if (Alloc) System::ClassDestroy(Self);
+}
+
+PChar __fastcall LBSCommon::TLBSMultiFileMemStream::GetFromId(PLBSMultiFileMemStream Self, Integer Id)
+{
+    Integer Index;
+    if (!LBSCommon::IndexFromId((TLBSNTDataFile*)Self->FFullData, Id, &Index))
+        return 0;
+    Integer ItemAddress = ((TLBSNTDataFile*)Self->FFullData)->FEntries[Index].FOffset;
+    return ((TLBSNTDataItem*)&Self->FFullData[ItemAddress])->FData;
 }
 
 Initialization _LBSCommon {
@@ -253,4 +272,6 @@ Initialization _LBSCommon {
     {0x0046A57C, LBSCommon::TLBSMultiFileSimpleStream::ReadIndexItem, true},
     
     {0x0046A60C, LBSCommon::TLBSMultiFileMemStream::Create, true},
+    {0x0046A7B0, LBSCommon::TLBSMultiFileMemStream::Destroy, true},
+    {0x0046A7E4, LBSCommon::TLBSMultiFileMemStream::GetFromId, true},
 };

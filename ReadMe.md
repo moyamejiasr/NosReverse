@@ -6,3 +6,5 @@
 
 # Regarding Virtual / Static
 Declare virtual function in correct offset, with correct name and no implementation. For static equivalent declare with _Name so we differenciate.
+
+Useful: #pragma sizeof(X)

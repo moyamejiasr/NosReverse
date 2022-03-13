@@ -35,7 +35,7 @@ namespace LBSCommon
             Integer FCSize;
             Boolean FCState;
         } FHeader;
-        PChar FData;
+        Char FData[0];
     };
 
     PChar *GBuffer = Cast(0x005EDE24);
@@ -57,6 +57,7 @@ namespace LBSCommon
         static Boolean __fastcall SetSize(PLBSReadFileStream, Integer);
         static Boolean __fastcall IsOpen(PLBSReadFileStream);
     };
+    ASSERT_SIZE(TLBSReadFileStream, 0x08);
 
     struct TLBSReadFileStreamEx: TLBSReadFileStream
     {
@@ -68,6 +69,7 @@ namespace LBSCommon
         static PLBSReadFileStreamEx __fastcall Create(Pointer, Boolean, String);
         static void __fastcall Destroy(PLBSReadFileStreamEx, Boolean);
     };
+    ASSERT_SIZE(TLBSReadFileStreamEx, 0x10);
 
     struct TLBSMultiFileSimpleStream: TLBSReadFileStreamEx
     {
@@ -84,15 +86,20 @@ namespace LBSCommon
         static void __fastcall ReadIdHeader(PLBSMultiFileSimpleStream, Integer, PChar, Integer*);
         static Boolean __fastcall ReadIndexItem(PLBSMultiFileSimpleStream, Integer, Pointer*, Boolean);
     };
+    ASSERT_SIZE(TLBSMultiFileSimpleStream, 0x1C);
 
     struct TLBSMultiFileMemStream: System::TObject
     {
+        FORCE_VIRTUAL;
         static VMT_ClassDefinition* Class;
 
-        Pointer __vftble;
         PChar FFullData;
         Integer FSize;
 
         static PLBSMultiFileMemStream __fastcall Create(Pointer, Boolean, String);
+        static void __fastcall Destroy(PLBSMultiFileMemStream, Boolean);
+        static PChar __fastcall GetFromId(PLBSMultiFileMemStream, Integer);
     };
+    int test = sizeof(TLBSMultiFileMemStream);
+    ASSERT_SIZE(TLBSMultiFileMemStream, 0xC);
 }
