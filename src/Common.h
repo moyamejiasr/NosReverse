@@ -34,7 +34,7 @@ extern HANDLE hConsole;
 // Bugfix non-virtual structs lacking vtable
 // All Delphi classes inherit TObject, who
 // has negative virtual members and __vtable
-#define FORCE_VIRTUAL virtual void _vf() = 0
+#define FORCE_VIRTUAL virtual void _vft()
 
 // Workaround for VSC++ config file
 #ifdef _MSVC
@@ -77,6 +77,7 @@ constexpr CastWrapper<R> Cast(const R& x)
 }
 
 // Router API
+extern DWORD dCounter;
 struct Route
 {
     DWORD Address; PVOID Function;
@@ -101,6 +102,9 @@ struct Initialization
             const uint32_t RelAddr = (DWORD)route.Function - (route.Address + sizeof(Instruction));
             memcpy(Instruction + 1, &RelAddr, 4);
             memcpy((PVOID)route.Address, Instruction, sizeof(Instruction));
+
+            // Increase counter
+            dCounter++;
         }
     }
 };

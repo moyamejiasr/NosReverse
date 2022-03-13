@@ -35,7 +35,7 @@ namespace LBSCommon
             Integer FCSize;
             Boolean FCState;
         } FHeader;
-        Char FData[0];
+        Char FData[];
     };
 
     PChar *GBuffer = Cast(0x005EDE24);

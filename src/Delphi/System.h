@@ -21,6 +21,13 @@ typedef AnsiChar* PAnsiChar;
 typedef PAnsiChar String;
 typedef String* PString;
 
+struct TMethod
+{
+  Pointer Code;
+  Pointer Data;
+};
+
+
 struct VMT_ClassDefinition 
 {
 	Pointer SelfPtr;

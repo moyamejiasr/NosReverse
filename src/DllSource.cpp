@@ -44,6 +44,7 @@ Initialization _Main {
 };
 
 HANDLE hConsole = nullptr;
+DWORD dCounter = 0;
 
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD dReason, LPVOID)
 {
@@ -54,6 +55,7 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD dReason, LPVOID)
         freopen("CON", "w", stdout); freopen("CON", "w", stderr);
         freopen("CON", "r", stdin);
         SetConsoleTitleA("NT Detourer Lib v1__");
+        CGREEN; COUT("Successfully derouted " << dCounter << " methods"); CWHITE;
     }
     return TRUE;
 }
