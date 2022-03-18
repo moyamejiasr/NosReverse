@@ -66,8 +66,9 @@ namespace LBSUICtrl
         static void __fastcall BringToFront(PLBSWidget);
         static void __fastcall SendToBack(PLBSWidget);
     };
+    ASSERT_SIZE(TLBSWidget, 0x24);
 
-    typedef struct TLBSWidgetList: Classes::TList
+    struct TLBSWidgetList: Classes::TList
     {
         static VMT_ClassDefinition* Class;
 
@@ -77,5 +78,6 @@ namespace LBSUICtrl
         static Integer __fastcall Add(PLBSWidgetList, Pointer);
         static void __fastcall Delete(PLBSWidgetList, Integer);
         static void __fastcall _Clear(PLBSWidgetList);
-    } *PLBSWidgetList;
+    };
+    ASSERT_SIZE(TLBSWidgetList, 0x10);
 }

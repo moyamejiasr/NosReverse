@@ -10,7 +10,7 @@
 namespace LBSCanvasTexture
 {
     typedef struct TLBSCanvasTexture *PLBSCanvasTexture;
-    typedef struct TLBSCanvasTextureEX *PLBSCanvasTextureEX;
+    typedef struct TLBSCanvasTextureEx *PLBSCanvasTextureEx;
     typedef struct TLBSTextRender *PLBSTextRender;
 
     void __fastcall RowTransform(Pointer, Pointer, Integer);
@@ -32,11 +32,11 @@ namespace LBSCanvasTexture
         static void __fastcall FixDimension(PLBSCanvasTexture, Smallint*);
         static void __fastcall _SetDimensions(PLBSCanvasTexture, Smallint, Smallint);
         static void __fastcall LoadTexture(PLBSCanvasTexture);
-        static Boolean __fastcall ReloadBitmap(PLBSCanvasTexture);
+        static Boolean __fastcall LoadSubTexture(PLBSCanvasTexture);
     };
     ASSERT_SIZE(TLBSCanvasTexture, 0x18);
 
-    struct TLBSCanvasTextureEX : TLBSCanvasTexture
+    struct TLBSCanvasTextureEx : TLBSCanvasTexture
     {
         static VMT_ClassDefinition* Class;
 
@@ -46,8 +46,13 @@ namespace LBSCanvasTexture
         Boolean Changed;
 
         virtual void __fastcall BindTexture();
+
+        static PLBSCanvasTextureEx __fastcall Create(Pointer, Boolean, Word, Word, Byte);
+        static Boolean __fastcall _BindTexture(PLBSCanvasTextureEx);
+        static Graphics::PCanvas __fastcall GetCanvas(PLBSCanvasTextureEx);
+        static void __fastcall SetDimensions(PLBSCanvasTextureEx, Smallint, Smallint);
     };
-    ASSERT_SIZE(TLBSCanvasTextureEX, 0x28);
+    ASSERT_SIZE(TLBSCanvasTextureEx, 0x28);
 
     /*struct TLBSTextRender : System::TObject
     {

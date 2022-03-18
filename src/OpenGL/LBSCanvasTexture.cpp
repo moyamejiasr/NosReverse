@@ -136,9 +136,8 @@ void __fastcall LBSCanvasTexture::TLBSCanvasTexture::LoadTexture(PLBSCanvasTextu
     }
 }
 
-Boolean __fastcall LBSCanvasTexture::TLBSCanvasTexture::ReloadBitmap(PLBSCanvasTexture Self)
+Boolean __fastcall LBSCanvasTexture::TLBSCanvasTexture::LoadSubTexture(PLBSCanvasTexture Self)
 {
-
     (*glBindTexture)(GL_TEXTURE_2D, (GLuint)Self->GLTexture);
     Integer Height = Self->FBitmap->GetHeight(), Width = Self->FBitmap->GetWidth();
     switch (Self->PixelFormat)
@@ -163,7 +162,7 @@ Boolean __fastcall LBSCanvasTexture::TLBSCanvasTexture::ReloadBitmap(PLBSCanvasT
             GetBitmapBits(Self->FBitmap->GetHandle(), 2 * Height * Width, LBSCommon::GBuffer);
             (*glTexSubImage2D)(GL_TEXTURE_2D, 0, 0, 0, Width, Height, GL_BGRA_EXT, GL_UNSIGNED_SHORT_4_4_4_4_REV, (GLvoid*)LBSCommon::GBuffer);
             break;
-        case 5u:
+        case 5:
             GetBitmapBits(Self->FBitmap->GetHandle(), 4 * Height * Width, LBSCommon::GBuffer);
             (*glTexSubImage2D)(GL_TEXTURE_2D, 0, 0, 0, Width, Height, GL_BGRA_EXT, GL_UNSIGNED_BYTE, (GLvoid*)LBSCommon::GBuffer);
             break;
@@ -171,6 +170,50 @@ Boolean __fastcall LBSCanvasTexture::TLBSCanvasTexture::ReloadBitmap(PLBSCanvasT
             return true;
   }
   return true;
+}
+
+LBSCanvasTexture::PLBSCanvasTextureEx __fastcall LBSCanvasTexture::TLBSCanvasTextureEx::Create(Pointer AClass, Boolean Alloc, Word Width, Word Height, Byte Format)
+{
+    PLBSCanvasTextureEx Self = (PLBSCanvasTextureEx)AClass;
+    if (Alloc)
+    {
+        CLASSCREATE_STUD;
+        Self = (PLBSCanvasTextureEx)System::ClassCreate(Self, Alloc);
+    }
+    System::TObject::Create(Self, 0);
+    Self->Scale.X = Width;
+    Self->Scale.Y = Height;
+    LBSCanvasTexture::TLBSCanvasTexture::Create(Self, 0, Width, Height, Format);
+    Self->WidthPerc = 1.0 / Self->FBitmap->GetWidth();
+    Self->HeightPerc = 1.0 / Self->FBitmap->GetHeight();
+    Self->Changed = 0;
+
+    if (Alloc) System::AfterConstruction(Self);
+    return Self;
+}
+
+Boolean __fastcall LBSCanvasTexture::TLBSCanvasTextureEx::_BindTexture(PLBSCanvasTextureEx Self)
+{
+    if (!Self->Changed)
+    {
+        (*glBindTexture)(GL_TEXTURE_2D, (GLuint)Self->GLTexture);
+        return true;
+    }
+    Self->Changed = false;
+    return LBSCanvasTexture::TLBSCanvasTexture::LoadSubTexture(Self);
+}
+
+Graphics::PCanvas __fastcall LBSCanvasTexture::TLBSCanvasTextureEx::GetCanvas(PLBSCanvasTextureEx Self)
+{
+    return Graphics::TBitmap::GetCanvas(Self->FBitmap);
+}
+
+void __fastcall LBSCanvasTexture::TLBSCanvasTextureEx::SetDimensions(PLBSCanvasTextureEx Self, Smallint Width, Smallint Height)
+{
+    Self->Scale.X = Width; Self->Scale.Y = Height;
+    TLBSCanvasTexture::_SetDimensions(Self, Width, Height);
+    Self->WidthPerc = 1.0 / Self->FBitmap->GetWidth();
+    Self->HeightPerc = 1.0 / Self->FBitmap->GetHeight();
 }
 
 Initialization _LBSCanvasTexture {
@@ -181,4 +224,10 @@ Initialization _LBSCanvasTexture {
     {0x00470708, LBSCanvasTexture::TLBSCanvasTexture::FixDimension, true},
     {0x00470730, LBSCanvasTexture::TLBSCanvasTexture::_SetDimensions, true},
     {0x00470824, LBSCanvasTexture::TLBSCanvasTexture::LoadTexture, true},
+    {0x00470A04, LBSCanvasTexture::TLBSCanvasTexture::LoadSubTexture, true},
+    
+    {0x00470C70, LBSCanvasTexture::TLBSCanvasTextureEx::Create, true},
+    {0x00470CFC, LBSCanvasTexture::TLBSCanvasTextureEx::_BindTexture, true},
+    {0x00470D28, LBSCanvasTexture::TLBSCanvasTextureEx::GetCanvas, true},
+    {0x00470D34, LBSCanvasTexture::TLBSCanvasTextureEx::SetDimensions, true},
 };
